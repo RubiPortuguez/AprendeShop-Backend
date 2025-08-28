@@ -30,9 +30,9 @@ CREATE TABLE IF NOT EXISTS `AprendeShopDB`.`Curso` (
   `valoracionInicial` INT UNSIGNED ZEROFILL NOT NULL,
   `imagenPrincipal` VARCHAR(100) NOT NULL,
   `materiales` VARCHAR(200) NOT NULL,
-  `galeriaAdicional` VARCHAR(45) NOT NULL,
+  `galeriaAdicional` VARCHAR(200) NOT NULL,
   `incluyeKit` TINYINT NOT NULL,
-  `descripcionKit` VARCHAR(45) NULL,
+  `descripcionKit` VARCHAR(200) NULL,
   `estado` TINYINT NOT NULL,
   PRIMARY KEY (`idCurso`))
 ENGINE = InnoDB;
@@ -66,13 +66,13 @@ CREATE TABLE IF NOT EXISTS `AprendeShopDB`.`compraUsuario` (
   CONSTRAINT `fk_Usuario_has_Curso_Usuario`
     FOREIGN KEY (`fk_idUsuario`)
     REFERENCES `AprendeShopDB`.`Usuario` (`idUsuario`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
   CONSTRAINT `fk_Usuario_has_Curso_Curso1`
     FOREIGN KEY (`fk_idCurso`)
     REFERENCES `AprendeShopDB`.`Curso` (`idCurso`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
@@ -91,13 +91,13 @@ CREATE TABLE IF NOT EXISTS `AprendeShopDB`.`resena` (
   CONSTRAINT `fk_Usuario_has_Curso_Usuario1`
     FOREIGN KEY (`fk_idUsuario`)
     REFERENCES `AprendeShopDB`.`Usuario` (`idUsuario`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
   CONSTRAINT `fk_Usuario_has_Curso_Curso2`
     FOREIGN KEY (`fk_idCurso`)
     REFERENCES `AprendeShopDB`.`Curso` (`idCurso`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
