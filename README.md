@@ -1,4 +1,5 @@
 # AprendeShop — Backend
+![AprendeShop](https://img.shields.io/badge/AprendeShop-Backend-brightgreen?style=for-the-badge&logo=bookstack&logoColor=white)
 
 ![SQL](https://img.shields.io/badge/SQL-MySQL-blue?logo=mysql&logoColor=white)  
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen?logo=springboot&logoColor=white)
@@ -10,7 +11,6 @@ Proyecto con **Spring Boot** + **MySQL**; el frontend trabaja con **Bootstrap**.
 ---
 
 ## 🗂️ Diagrama de Base de Datos
-> Coloca `db.png` en la raíz del repo (o ajusta la ruta).
 ![Diagrama BD](./db.png)
 
 ---
