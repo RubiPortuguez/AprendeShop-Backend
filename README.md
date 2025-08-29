@@ -1,12 +1,12 @@
 # AprendeShop — Backend
-![AprendeShop](https://img.shields.io/badge/AprendeShop-Backend-brightgreen?style=for-the-badge&logo=bookstack&logoColor=white)
+![AprendeShop](https://img.shields.io/badge/AprendeShop-Backend-800020?style=for-the-badge&logo=bookstack&logoColor=white)
 
 ![SQL](https://img.shields.io/badge/SQL-MySQL-blue?logo=mysql&logoColor=white)  
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen?logo=springboot&logoColor=white)
 
 ## 📌 Descripción
 Backend de **AprendeShop** (e-commerce + learning).  
-Proyecto con **Spring Boot** + **MySQL**; el frontend trabaja con **Bootstrap**.
+Proyecto con **Spring Boot** + **MySQL**
 
 ---
 
