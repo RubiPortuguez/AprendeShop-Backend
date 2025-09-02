@@ -1,7 +1,5 @@
 package org.aprende_shop.aprende_shop.model;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 public class Resena {
 	private Long idResena;
 	private Long fk_idCurso;
