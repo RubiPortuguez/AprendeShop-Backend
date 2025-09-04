@@ -1,17 +1,34 @@
 package org.aprende_shop.aprende_shop.model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+//POJO: Plain Old Java Object
+@Entity
+@Table(name="usuario")
 public class Usuario {
 
-	private Integer id;
+	@Id
+	@GeneratedValue(strategy= GenerationType.IDENTITY)
+	@Column(name="idusuario", unique=true, nullable=false)
+	private Integer idUsuario;
+	@Column(name="nombre",nullable=false)
 	private String nombre;
+	@Column(name="correoelectronico",nullable=false)
 	private String email;
+	@Column(name="telefono",nullable=false)
 	private String telefono;
+	@Column(name="contrasena",nullable=false)
 	private String password;
+	@Column(name="tipousuario",nullable=false)
 	private String tipoUsuario;
+	@Column(name="estado",nullable=false)
 	private Byte estado;
-	
-	private static int totalUsuarios = 0;
-	
+		
 	public Usuario(String nombre, String email, String telefono, String password, String tipoUsuario, byte estado) {
 		//super();
 		this.nombre = nombre;
@@ -19,23 +36,18 @@ public class Usuario {
 		this.telefono = telefono;
 		this.password = password;
 		this.tipoUsuario = tipoUsuario;
-		
-		Usuario.totalUsuarios++;
-		this.id = Usuario.totalUsuarios;
 		this.estado = estado;
 	}//constructor
 	
 	public Usuario() {
-		Usuario.totalUsuarios++;
-		this.id = Usuario.totalUsuarios;
 	}//constructor
 
 	public Integer getId() {
-		return id;
+		return idUsuario;
 	}//getId
 
 	public void setId(Integer id) {
-		this.id = id;
+		this.idUsuario = id;
 	}//setId
 
 	public String getNombre() {
@@ -75,9 +87,9 @@ public class Usuario {
 	}//getTipoUsuario
 
 	public void setTipoUsuario(String tipoUsuario) {
-		if (tipoUsuario.equals("estudiante")) {
+		if (tipoUsuario.equals("ES")) {
 			this.tipoUsuario = tipoUsuario;
-		} else if (tipoUsuario.equals("tallerista")) {
+		} else if (tipoUsuario.equals("TA")) {
 			this.tipoUsuario = tipoUsuario;
 		}
 	}//setTipoUsuario
@@ -92,7 +104,7 @@ public class Usuario {
 
 	@Override
 	public String toString() {
-		return "Usuario [id=" + id + ", nombre=" + nombre + ", email=" + email + ", telefono=" + telefono
+		return "Usuario [id=" + idUsuario + ", nombre=" + nombre + ", email=" + email + ", telefono=" + telefono
 				+ ", password=" + password + ", tipoUsuario=" + tipoUsuario + ", estado=" + estado + "]";
 	}	
 	

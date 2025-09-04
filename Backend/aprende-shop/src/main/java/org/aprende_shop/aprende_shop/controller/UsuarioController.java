@@ -1,5 +1,5 @@
 package org.aprende_shop.aprende_shop.controller;
-import java.util.ArrayList;
+import java.util.List;
 
 import org.aprende_shop.aprende_shop.model.Usuario;
 import org.aprende_shop.aprende_shop.service.UsuarioService;
@@ -32,7 +32,7 @@ public class UsuarioController {
 	}
 	
 	@GetMapping
-	public ArrayList<Usuario> getUsuarios() {
+	public List<Usuario> getUsuarios() {
 		return service.getUsers();
 	}
 	
