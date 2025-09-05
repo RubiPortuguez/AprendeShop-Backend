@@ -48,13 +48,11 @@ public class ResenaService {
 		Resena tmpRes= null;
 		if(reseRepository.existsById(idResena)) {
 			Resena res= reseRepository.findById(idResena).get();
-			System.out.println(res);
 				if(fk_idCurso!=null) res.setFk_idCurso(fk_idCurso);
 				if(fk_idUsuario!=null) res.setFk_idUsuario(fk_idUsuario);
 				if(calificacion!=null) res.setCalificacion(calificacion);
 				if(comentarios!=null) res.setComentarios(comentarios);
 				reseRepository.save(res);
-				System.out.println(res);
 				tmpRes = res;
 			}
 			return tmpRes;

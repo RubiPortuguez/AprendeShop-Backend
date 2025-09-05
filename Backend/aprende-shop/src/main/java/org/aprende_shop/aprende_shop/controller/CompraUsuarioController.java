@@ -39,8 +39,9 @@ public class CompraUsuarioController {
     // PUT: actualizar
     @PutMapping(path="{idCompra}")
     public CompraUsuario updateCompra(@PathVariable("idCompra") Integer id,
-                                      @RequestBody CompraUsuario compra) {
-        return service.updateCompra(id, compra);
+    		@RequestParam(required=false) Integer fk_idCurso,
+			@RequestParam(required=false) Integer fk_idUsuario) {
+        return service.updateCompra(id, fk_idCurso,fk_idUsuario);
     }
 
     // DELETE

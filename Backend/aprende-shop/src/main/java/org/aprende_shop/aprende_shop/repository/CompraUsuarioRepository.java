@@ -8,7 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CompraUsuarioRepository extends JpaRepository<CompraUsuario, Integer> {
-    // Consultas útiles adicionales
-    List<CompraUsuario> findByFkIdUsuario(Integer fkIdUsuario);
-    List<CompraUsuario> findByFkIdCurso(Integer fkIdCurso);
+
 }

@@ -36,10 +36,6 @@ public class CompraUsuario {
 		return idCompra;
 	}
 
-	public void setIdCompra(Integer idCompra) {
-		this.idCompra = idCompra;
-	}
-
 	public Integer getFkIdCurso() {
 		return fkIdCurso;
 	}
@@ -50,6 +46,10 @@ public class CompraUsuario {
 
 	public Integer getFkIdUsuario() {
 		return fkIdUsuario;
+	}
+
+	public void setFkIdUsuario(Integer fkIdUsuario) {
+		this.fkIdUsuario = fkIdUsuario;
 	}
 
 	@Override

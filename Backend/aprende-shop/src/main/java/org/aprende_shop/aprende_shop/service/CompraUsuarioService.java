@@ -1,7 +1,6 @@
 package org.aprende_shop.aprende_shop.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -27,16 +26,7 @@ public class CompraUsuarioService {
         return repo.findById(id).orElse(null);
     }
 
-    public List<CompraUsuario> getComprasPorUsuario(Integer fkIdUsuario) {
-        return repo.findByFkIdUsuario(fkIdUsuario);
-    }
-
-    public List<CompraUsuario> getComprasPorCurso(Integer fkIdCurso) {
-        return repo.findByFkIdCurso(fkIdCurso);
-    }
-
     // CREATE
-    @Transactional
     public CompraUsuario addCompra(CompraUsuario compra) {
         // idCompra se genera automáticamente por la BD
         return repo.save(compra);
@@ -44,18 +34,19 @@ public class CompraUsuarioService {
 
     // UPDATE
     @Transactional
-    public CompraUsuario updateCompra(Integer id, CompraUsuario nueva) {
-        Optional<CompraUsuario> opt = repo.findById(id);
-        if (opt.isEmpty()) return null;
-
-        CompraUsuario existente = opt.get();
-        existente.setFkIdCurso(nueva.getFkIdUsuario());
-        existente.setFkIdCurso(nueva.getFkIdCurso());
-        return repo.save(existente);
-    }
+    public CompraUsuario updateCompra(Integer id, Integer fk_idCurso,Integer fk_idUsuario) {
+		CompraUsuario comUsu= null;
+		if(repo.existsById(id)) {
+			CompraUsuario compra= repo.findById(id).get();
+				if(fk_idCurso!=null) compra.setFkIdCurso(fk_idCurso);
+				if(fk_idUsuario!=null) compra.setFkIdUsuario(fk_idUsuario);
+				repo.save(compra);
+				comUsu = compra;
+			}
+			return comUsu;
+	}
 
     // DELETE
-    @Transactional
     public boolean deleteCompra(Integer id) {
         if (!repo.existsById(id)) return false;
         repo.deleteById(id);
