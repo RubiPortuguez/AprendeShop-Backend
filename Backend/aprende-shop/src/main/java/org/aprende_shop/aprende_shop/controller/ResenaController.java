@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -51,10 +52,10 @@ public class ResenaController {
 	//PUT
 	@PutMapping (path="{idResena}")
 	public Resena updateResena(@PathVariable("idResena") Integer idResena,
-			@PathVariable(required=false) Integer fk_idCurso,
-			@PathVariable(required=false) Integer fk_idUsuario,
-			@PathVariable(required=false) Integer calificacion,
-			@PathVariable(required=false) String comentarios){
+			@RequestParam(required=false) Integer fk_idCurso,
+			@RequestParam(required=false) Integer fk_idUsuario,
+			@RequestParam(required=false) Integer calificacion,
+			@RequestParam(required=false) String comentarios){
 		return service.updateResena(idResena,fk_idCurso,fk_idUsuario,calificacion,comentarios);
 	}
 }
