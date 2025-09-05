@@ -2,69 +2,69 @@ package org.aprende_shop.aprende_shop.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.aprende_shop.aprende_shop.model.Curso;
+import org.aprende_shop.aprende_shop.repository.CursoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class CursoService {
-	private final ArrayList<Curso> lista = new ArrayList<Curso>();
+	private final CursoRepository repository;
 	
-	public CursoService() {
-		lista. add(new Curso("Repostería creativa", "Pasteles y cupcakes con técnicas modernas.","Domina batidos, emulsiones, fondant, ganache, royal icing y templado de chocolate. Incluye costeo y empaque.", "Repostería creativa",
-				"Intermedio",9,"ES",163.0,0, 
-			    "https://res.cloudinary.com/dwkykeqgz/image/upload/v1755200193/reposteria_o20yu8.jpg","Batidora, Moldes para pasteles, Fondant, Colorantes comestibles, Boquillas y mangas pasteleras, Espátulas", "https://res.cloudinary.com/dwkykeqgz/image/upload/v1755200193/reposteria_detail1.jpg",0,
-			    "Kit con complementos",1) );
-		lista.add(new Curso("Velas artesanales", "Crea velas únicas con cera de soya/abeja, fragancias y moldes.","Descubre el arte de fabricar velas a mano: tipos de cera, pabilos, temperaturas de vertido, pruebas de quemado y decoración. Ideal para hobby o emprendimiento.","Artesanías",
-                "Intermedio", 5, "ES", 87.0, 4,
-                "https://res.cloudinary.com/dwkykeqgz/image/upload/v1755199911/candles_jrg8zo.jpg","Cera de soya, Cera de abeja, Moldes de silicona, Pabilos, Fragancias, Colorantes","https://res.cloudinary.com/dwkykeqgz/image/upload/v1755199911/candles_detail1.jpg",
-                1, "Cera de soya, 2 moldes, pabilos, 2 fragancias, colorante básico.", 1) );
-		lista.add(new Curso("Pintura creativa","Color, texturas y composición para obras originales.","De teoría del color a técnicas mixtas: acrílico, veladuras, composición, perspectiva y práctica guiada para construir portafolio.","Arte", 
-                "Principiante", 7, "ES", 124.0, 4,
-                "https://res.cloudinary.com/dwkykeqgz/image/upload/v1755200187/paint_tlowmd.jpg","Pinceles variados, Lienzo, Pinturas acrílicas, Paleta de mezclas, Caballetes, Barniz protector","https://res.cloudinary.com/dwkykeqgz/image/upload/v1755200187/paint_detail1.jpg",
-                0, "Prueba de kit", 1) );
-		
-	}
+	@Autowired
+	public CursoService(CursoRepository repository) {
+		this.repository = repository;
+	}//constructor
 	
+	
+	//-----------------MÉTODOS:
+	//GET
 	public List<Curso>getCursos(){
-		return lista;
-	}
+		return repository.findAll();
+	}//getCursos
 
-	public Curso getCurso(Long idCurso) {
+	public Curso getCurso(Integer idCurso) {
+		return repository.findById(idCurso).orElseThrow(
+				()-> new IllegalArgumentException("El curso con el id [" +idCurso
+						+ "] + no existe")
+				);
+	}//getCurso
+
+	//DELETE
+	public Curso deleteCurso(Integer idCurso) {
 		Curso tmpCurs = null;
-		for (Curso curs : lista) {
-			if (curs.getIdCurso() == idCurso) {
-				tmpCurs = curs;
-				break;
-			}
-		}
+			if (repository.existsById(idCurso)) {
+				tmpCurs = repository.findById(idCurso).get();
+				repository.deleteById(idCurso);
+			}//if
 		return tmpCurs;
-	}
+	}//deteleCurso
 
-	public Curso deleteCurso(Long idCurso) {
-		Curso tmpCurs = null;
-		for (Curso curs : lista) {
-			if (curs.getIdCurso() == idCurso) {
-				tmpCurs = curs;
-				lista.remove(curs);
-				break;
-			}
-		}
-		return tmpCurs;
-	}
-
+	//POST
 	public Curso addCurso(Curso curso) {
-		lista.add(curso);
+		Optional<Curso> curs =
+				repository.findByNombreCurso(curso.getNombreCurso() );
+		if(curs.isEmpty() ) {
+			repository.save(curso);
+		} else {
+			curso =null;
+		}//else
 		return curso;
-	}
+	}//addCurso
 
-	public Curso updateCurso(Long idCurso, String nombreCurso, String descripcionCorta, String descripcionDetallada,
+	
+	//UPDATE
+	public Curso updateCurso(Integer idCurso, String nombreCurso, String descripcionCorta, String descripcionDetallada,
 			String categoria, String nivelDificultad, Integer duracionTotal, String idioma, Double precio,
 			Integer valoracionInicial, String imagenPrincipal, String materiales, String galeriaAdicional,
-			Integer incluyeKit, String descripcionKit, Integer estado) {
+			Byte incluyeKit, String descripcionKit, Byte estado) {
 		Curso tmpCurs = null;
-		for (Curso curs : lista) {
-			if (curs.getIdCurso() == idCurso) {
+		
+			if (repository.existsById(idCurso)) {
+				Curso curs = repository.findById(idCurso).get();
 				if (nombreCurso != null) curs.setNombreCurso(nombreCurso);
 				if (descripcionCorta != null) curs.setDescripcionCorta(descripcionCorta);
 				if (descripcionDetallada != null) curs.setDescripcionDetallada(descripcionDetallada);
@@ -80,12 +80,10 @@ public class CursoService {
 				if (incluyeKit != null) curs.setIncluyeKit(incluyeKit);
 				if (descripcionKit != null) curs.setDescripcionKit(descripcionKit);
 				if (estado != null) curs.setEstado(estado);
-				tmpCurs = curs;
-				break;
-			}
-		}
+				tmpCurs = repository.save(curs);
+			}//if
 		return tmpCurs;
-	}
+	}//updateCurso
 	
 	
-}
+}//class

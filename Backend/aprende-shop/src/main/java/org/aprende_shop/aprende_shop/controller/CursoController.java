@@ -17,15 +17,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping (path = "/api/cursos/") // http://localhost:8080/api/cursos/
-public class CursoController {
-	
+public class CursoController {	
 	private final CursoService service;
 	
 	@Autowired
 	public CursoController(CursoService service) {
 		this.service = service;
-	}
+	}//constructor
 	
+	//GET
 	// Todos los cursos
 	@GetMapping
 	public List<Curso> getCurso(){
@@ -34,24 +34,27 @@ public class CursoController {
 	
 	// Mostrar Curso por idCurso
 	@GetMapping (path = "{curId}")
-	public Curso getCurso(@PathVariable ("curId") Long idCurso) {
+	public Curso getCurso(@PathVariable ("curId") Integer idCurso) {
 		return service.getCurso(idCurso);
 	}
 	
+	//DELETE
 	// Borrar Curso por idCurso
 	@DeleteMapping (path = "{curId}")
-	public Curso deleteCurso(@PathVariable ("curId") Long idCurso) {
+	public Curso deleteCurso(@PathVariable ("curId") Integer idCurso) {
 		return service.deleteCurso(idCurso);
 	}
 	
+	//POST
 	// Agregar un curso nuevo
 	@PostMapping
 	public Curso addCurso(@RequestBody Curso curso) {
 		return service.addCurso(curso);
 	}
 	
+	//PUT
 	@PutMapping (path = "{curId}")
-	public Curso updateCurso(@PathVariable ("curId") Long idCurso,
+	public Curso updateCurso(@PathVariable ("curId") Integer idCurso,
 			@RequestParam (required = false) String nombreCurso,
 			@RequestParam (required = false) String descripcionCorta,
 			@RequestParam (required = false) String descripcionDetallada,
@@ -64,9 +67,9 @@ public class CursoController {
 			@RequestParam (required = false) String imagenPrincipal,
 			@RequestParam (required = false) String materiales,
 			@RequestParam (required = false) String galeriaAdicional,
-			@RequestParam (required = false) Integer incluyeKit,
+			@RequestParam (required = false) Byte incluyeKit,
 			@RequestParam (required = false) String descripcionKit,
-			@RequestParam (required = false) Integer estado) {
+			@RequestParam (required = false) Byte estado) {
 		return service.updateCurso(idCurso,nombreCurso, descripcionCorta, descripcionDetallada, categoria,
 				nivelDificultad, duracionTotal, idioma, precio, valoracionInicial,
 				imagenPrincipal, materiales, galeriaAdicional, incluyeKit, descripcionKit, estado);
@@ -75,4 +78,4 @@ public class CursoController {
 	
 	
 	
-}
+}//class

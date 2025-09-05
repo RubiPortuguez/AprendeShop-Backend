@@ -1,29 +1,58 @@
 package org.aprende_shop.aprende_shop.model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+//POJO - Plane Old Java Object
+@Entity
+@Table(name="curso")
+
 public class Curso {
-	private Long idCurso;
+	@Id 
+	@GeneratedValue(strategy= GenerationType.IDENTITY)
+	@Column(name="idcurso", unique=true, nullable=false) 
+	private Integer idCurso;
+	@Column(name="nombrecurso",nullable=false)
 	private String nombreCurso;
+	@Column(name="descripcioncorta",nullable=false)
 	private String descripcionCorta;
+	@Column(name="descripciondetallada",nullable=false)
 	private String descripcionDetallada;
+	@Column(nullable=false)
 	private String categoria;
+	@Column(name="niveldificultad",nullable=false)
 	private String nivelDificultad;
+	@Column(name="duraciontotal",nullable=false)
 	private Integer duracionTotal;
+	@Column(nullable=false)
 	private String idioma;
+	@Column(nullable=false)
 	private Double precio;
+	@Column(name="valoracioninicial",nullable=false)
 	private Integer valoracionInicial;
+	@Column(name="imagenprincipal",nullable=false)
 	private String imagenPrincipal;
+	@Column(nullable=false)
 	private String materiales;
+	@Column(name="galeriaadicional",nullable=false)
 	private String galeriaAdicional;
-	private Integer incluyeKit;
+	@Column(name="incluyekit",nullable=false)
+	private Byte incluyeKit;
+	@Column(name="descripcionkit",nullable=true)
 	private String descripcionKit;
-	private Integer estado;
+	@Column(nullable=false)
+	private Byte estado;
 	
 	private static long total = 0;
 
 	public Curso(String nombreCurso, String descripcionCorta, String descripcionDetallada, String categoria,
 			String nivelDificultad, Integer duracionTotal, String idioma, Double precio, Integer valoracionInicial,
-			String imagenPrincipal, String materiales, String galeriaAdicional, Integer incluyeKit,
-			String descripcionKit, Integer estado) {
+			String imagenPrincipal, String materiales, String galeriaAdicional, Byte incluyeKit,
+			String descripcionKit, Byte estado) {
 		super();
 		this.nombreCurso = nombreCurso;
 		this.descripcionCorta = descripcionCorta;
@@ -41,20 +70,20 @@ public class Curso {
 		this.descripcionKit = descripcionKit;
 		this.estado = estado;
 		
-		Curso.total++;
-		this.idCurso = Curso.total;
-	} // constructor 
+//		Curso.total++;
+//		this.idCurso = Curso.total;
+	}// constructor 
 	
 	public Curso() {
-		Curso.total++;
-		this.idCurso = Curso.total;
+//		Curso.total++;
+//		this.idCurso = Curso.total;
 	} //constructor vacio para el metodo post
 	
 	public String getNombreCurso() {
 		return nombreCurso;
 	}
 
-	public Long getIdCurso() {
+	public Integer getIdCurso() {
 		return idCurso;
 	}
 
@@ -150,11 +179,11 @@ public class Curso {
 		this.galeriaAdicional = galeriaAdicional;
 	}
 
-	public Integer getIncluyeKit() {
+	public Byte getIncluyeKit() {
 		return incluyeKit;
 	}
 
-	public void setIncluyeKit(Integer incluyeKit) {
+	public void setIncluyeKit(Byte incluyeKit) {
 		this.incluyeKit = incluyeKit;
 	}
 
@@ -166,11 +195,11 @@ public class Curso {
 		this.descripcionKit = descripcionKit;
 	}
 
-	public Integer getEstado() {
+	public Byte getEstado() {
 		return estado;
 	}
 
-	public void setEstado(Integer estado) {
+	public void setEstado(Byte estado) {
 		this.estado = estado;
 	}
 
