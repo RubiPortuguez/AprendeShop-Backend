@@ -10,7 +10,7 @@ import javax.persistence.Table;
 
 
 @Entity
-@Table(name = "compraUsuario")
+@Table(name = "comprausuario")
 public class CompraUsuario {
 
     @Id
@@ -18,10 +18,10 @@ public class CompraUsuario {
     @Column(name = "idcompra")
     private Integer idCompra;
 
-    @Column(name = "fkid_usuario", nullable = false)
+    @Column(name = "fk_idusuario", nullable = false)
     private Integer fkIdUsuario;
 
-    @Column(name = "fkidcurso", nullable = false)
+    @Column(name = "fk_idcurso", nullable = false)
     private Integer fkIdCurso;
 
     // Constructors

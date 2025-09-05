@@ -30,14 +30,15 @@ public class ResenaController {
 	public List<Resena> getResenas(){
 		return service.getResena();
 	}
+	
 	@GetMapping (path="{idResena}")
-	public Resena getResena(@PathVariable("idResena") Long idResena){
+	public Resena getResena(@PathVariable("idResena") Integer idResena){
 		return service.getResena(idResena);
 	}
 	
 	//DELETE
 	@DeleteMapping (path="{idResena}")
-	public Resena deleteResena(@PathVariable("idResena") Long idResena){
+	public Resena deleteResena(@PathVariable("idResena") Integer idResena){
 		return service.deleteResena(idResena);
 	}
 	
@@ -49,10 +50,10 @@ public class ResenaController {
 	
 	//PUT
 	@PutMapping (path="{idResena}")
-	public Resena updateResena(@PathVariable("idResena") Long idResena,
-			@PathVariable(required=false) Long fk_idCurso,
-			@PathVariable(required=false) Long fk_idUsuario,
-			@PathVariable(required=false) Long calificacion,
+	public Resena updateResena(@PathVariable("idResena") Integer idResena,
+			@PathVariable(required=false) Integer fk_idCurso,
+			@PathVariable(required=false) Integer fk_idUsuario,
+			@PathVariable(required=false) Integer calificacion,
 			@PathVariable(required=false) String comentarios){
 		return service.updateResena(idResena,fk_idCurso,fk_idUsuario,calificacion,comentarios);
 	}

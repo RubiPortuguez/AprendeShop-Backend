@@ -1,57 +1,60 @@
 package org.aprende_shop.aprende_shop.service;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.aprende_shop.aprende_shop.model.Resena;
+import org.aprende_shop.aprende_shop.repository.ResenaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ResenaService {
-	private final ArrayList<Resena> resenaUsuario = 
-			new ArrayList<Resena>();
 	
-	public ArrayList<Resena> getResena() {
-        return resenaUsuario;
-    }
+	private final ResenaRepository reseRepository;
+	
+	@Autowired
+	public ResenaService(ResenaRepository reseRepository) {
+		this.reseRepository = reseRepository;
+	}
+
+	public List<Resena> getResena() {
+        return reseRepository.findAll();
+    } //Todos los cursos
 	
 	//GET
-	public Resena getResena(Long idResena) {
-		for(Resena res:resenaUsuario) {
-			if(res.getIdResena()==idResena) {
-				return res;
-			}
-		}
-		return null;
-	}
+	public Resena getResena(Integer idResena) {
+		return reseRepository.findById(idResena).orElseThrow(
+				() -> new IllegalArgumentException("El producto con el id ["
+						+  idResena +"] no existe"));
+	} // Un solo curso
 	
 	//DELETE
-	public Resena deleteResena(Long idResena) {
-		for(Resena res:resenaUsuario) {
-			if(res.getIdResena()==idResena) {
-				resenaUsuario.remove(res);
-				return res;
-			}
+	public Resena deleteResena(Integer idResena) {
+		Resena tmpRes= null;
+		if (reseRepository.existsById(idResena)) {
+			tmpRes = reseRepository.findById(idResena).get();
+			reseRepository.deleteById(idResena);
 		}
-		return null;
+		return tmpRes;
 	}
 	
 	//POST
 	public Resena addResena(Resena res) {
-		resenaUsuario.add(res);
-		return res;
+	return reseRepository.save(res);
 	}
 	
 	//PUT
-	public Resena updateResena(Long idResena, Long fk_idCurso, Long fk_idUsuario, Long calificacion, String comentarios) {
-		for(Resena res:resenaUsuario) {
-			if(res.getIdResena()==idResena) {
+	public Resena updateResena(Integer idResena, Integer fk_idCurso, Integer fk_idUsuario, Integer calificacion, String comentarios) {
+		Resena tmpRes= null;
+		if(reseRepository.existsById(idResena)) {
+			Resena res= reseRepository.findById(idResena).get();
 				if(fk_idCurso!=null) res.setFk_idCurso(fk_idCurso);
 				if(fk_idUsuario!=null) res.setFk_idUsuario(fk_idUsuario);
 				if(calificacion!=null) res.setCalificacion(calificacion);
 				if(comentarios!=null) res.setComentarios(comentarios);
-				return res;
+				reseRepository.save(res);
+				tmpRes = res;
 			}
-		}
-		return null;
+			return tmpRes;
 	}
 }

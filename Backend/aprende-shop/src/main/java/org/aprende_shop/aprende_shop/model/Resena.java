@@ -1,36 +1,50 @@
 package org.aprende_shop.aprende_shop.model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+@Entity
+@Table (name = "resena")
 public class Resena {
-	private Long idResena;
-	private Long fk_idCurso;
-	private Long fk_idUsuario;
-	private Long calificacion;
+	
+	@Id
+	@GeneratedValue	(strategy = GenerationType.IDENTITY)
+	@Column(name = "idresena")
+	private Integer idResena;
+    @Column (name = "fk_idcurso")
+	private Integer fk_idCurso;
+    @Column (name = "fk_idusuario")
+	private Integer fk_idUsuario;
+	@Column (name = "calificacion")
+	private Integer calificacion;
+	@Column (name = "comentario")
 	private String comentarios;
 	
-	private static long total=0;
-	
+
 	//Constructor
-	public Resena(Long fk_idCurso, Long fk_idUsuario, Long calificacion, String comentarios) {
+	public Resena(Integer fk_idCurso, Integer fk_idUsuario, Integer calificacion, String comentarios) {
 		super();
 		this.fk_idCurso = fk_idCurso;
 		this.fk_idUsuario = fk_idUsuario;
 		this.calificacion = calificacion;
 		this.comentarios = comentarios;
-		total++;
-		this.idResena = Resena.total;
 	}
 	
 	//Constructor vacio
 	public Resena() {
-		Resena.total++;
-		this.idResena = Resena.total;
 	}
 	
 	//Get & Set
-	public Long getCalificacion() {
+	public Integer getCalificacion() {
 		return calificacion;
 	}
-	public void setCalificacion(Long calificacion) {
+	public void setCalificacion(Integer calificacion) {
 		this.calificacion = calificacion;
 	}
 	
@@ -41,21 +55,21 @@ public class Resena {
 		this.comentarios = comentarios;
 	}
 	
-	public Long getIdResena() {
+	public Integer getIdResena() {
 		return idResena;
 	}
 
-	public Long getFk_idCurso() {
+	public Integer getFk_idCurso() {
 		return fk_idCurso;
 	}
-	public void setFk_idCurso(Long fk_idCurso) {
+	public void setFk_idCurso(Integer fk_idCurso) {
 		this.fk_idCurso = fk_idCurso;
 	}
 
-	public Long getFk_idUsuario() {
+	public Integer getFk_idUsuario() {
 		return fk_idUsuario;
 	}
-	public void setFk_idUsuario(Long fk_idUsuario) {
+	public void setFk_idUsuario(Integer fk_idUsuario) {
 		this.fk_idUsuario = fk_idUsuario;
 	}
 	
