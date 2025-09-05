@@ -1,70 +1,62 @@
 package org.aprende_shop.aprende_shop.service;
-import java.util.ArrayList;
+
+import java.util.List;
+import java.util.Optional;
+
 import org.aprende_shop.aprende_shop.model.Usuario;
+import org.aprende_shop.aprende_shop.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UsuarioService {
 
-	private final ArrayList<Usuario> lista = new ArrayList<Usuario>();
+	private final UsuarioRepository repository;
 	
 	@Autowired
-	public UsuarioService() {
-		lista.add(new Usuario("Yutnu Hernandez","yutnu@gmail.com","5501234567","","tallerista", (byte)1));
-		lista.add(new Usuario("Erika Hernandez","erika@gmail.com","5500123456","","estudiante", (byte)1));
-		lista.add(new Usuario("Yumari Diaz","yumari@gmail.com","5500012345","","tallerista", (byte)1));
-		lista.add(new Usuario("Yessica Ramirez","yessica@gmail.com","5500001234","","estudiante", (byte)1));
-		lista.add(new Usuario("Melisa Lopez","melisa@gmail.com","5500000123","","estudiante", (byte)1));
-		lista.add(new Usuario("Rubi Portuguez","rubi@gmail.com","5500000012","","estudiante", (byte)1));
-		lista.add(new Usuario("Carolina Ortiz","caro@gmail.com","5500000001","","estudiante", (byte)1));
+	public UsuarioService (UsuarioRepository repository) {
+		this.repository = repository;
 	}
 	
 	public Usuario getUser(Integer id) {
-		Usuario tmpUsuario = null;
-		for (Usuario usuario : lista) {
-			if (usuario.getId() == id) {
-				tmpUsuario = usuario;
-				break;
-			}
-		}
-		return tmpUsuario;
+		return repository.findById(id).orElseThrow(()-> new IllegalArgumentException("El producto con el id [ " + id +" ] no existe"));
 	}//getUser
 
-	public ArrayList<Usuario> getUsers() {
-		return lista;
+	public List<Usuario> getUsers() {
+		return repository.findAll();
 	}//getUsers
 	
 	public Usuario deleteUser(Integer id) {
-		Usuario tmpUsuario= null;
-		for (Usuario usuario : lista) {
-			if (usuario.getId() == id) {
-				tmpUsuario = usuario;
-				lista.remove(usuario);
-				break;
-			}
+		Usuario tmpUser = null;
+		if (repository.existsById(id)) {
+			tmpUser = repository.findById(id).get();
+			repository.deleteById(id);
 		}
-		return tmpUsuario;
+		return tmpUser;
 	}//deleteUser
 
 	public Usuario addUser(Usuario usuario) {
-		lista.add(usuario);
+		Optional<Usuario> tmpUser = repository.findByEmail(usuario.getEmail());
+		if (tmpUser.isEmpty()) {
+			repository.save(usuario);
+		} else {
+			usuario = null;
+		}
 		return usuario;
 	}//addUser
 
 	public Usuario updateUser(Integer id, String nombre, String email, String telefono, String password, String tipoUsuario, Byte estado) {
 		Usuario tmpUsuario = null;
-		for (Usuario usuario : lista) {
-			if (usuario.getId() == id) {
-				if (nombre != null) usuario.setNombre(nombre);
-				if (email != null) usuario.setEmail(email);
-				if (telefono != null) usuario.setTelefono(telefono);
-				if (password != null) usuario.setPassword(password);
-				if (tipoUsuario != null) usuario.setTipoUsuario(tipoUsuario);
-				if (estado != null) usuario.setEstado(estado);
-				tmpUsuario = usuario;
-				break;
-			}
+		if (repository.existsById(id)) {
+			Usuario usuario = repository.findById(id).get();
+			if (nombre != null) usuario.setNombre(nombre);
+			if (email != null) usuario.setEmail(email);
+			if (telefono != null) usuario.setTelefono(telefono);
+			if (password != null) usuario.setPassword(password);
+			if (tipoUsuario != null) usuario.setTipoUsuario(tipoUsuario);
+			if (tipoUsuario != null) usuario.setEstado(estado);
+			repository.save(usuario);
+			tmpUsuario = usuario;
 		}
 		return tmpUsuario;
 	}//updateUser

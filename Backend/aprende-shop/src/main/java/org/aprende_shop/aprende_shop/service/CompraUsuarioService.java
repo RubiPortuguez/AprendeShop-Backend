@@ -1,56 +1,65 @@
 package org.aprende_shop.aprende_shop.service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
+import javax.transaction.Transactional;
 
 import org.aprende_shop.aprende_shop.model.CompraUsuario;
+import org.aprende_shop.aprende_shop.repository.CompraUsuarioRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class CompraUsuarioService {
 
-    // Lista que simula la BD
-    private final List<CompraUsuario> compras = new ArrayList<>();
+    private final CompraUsuarioRepository repo;
 
-    // GET: todas las compras
-    //compras → es un ArrayList en memoria que guarda las compras creadas.
-    //getCompras → devuelve todas.
+    public CompraUsuarioService(CompraUsuarioRepository repo) {
+        this.repo = repo;
+    }
+
+    // READ
     public List<CompraUsuario> getCompras() {
-        return compras;
+        return repo.findAll();
     }
 
-    // GET: por id
-    //getCompra(id) → busca por id.
     public CompraUsuario getCompra(Integer id) {
-        return compras.stream()
-                .filter(c -> c.getIdCompra().equals(id))
-                .findFirst()
-                .orElse(null);
+        return repo.findById(id).orElse(null);
     }
 
-    // POST: agregar
-    //addCompra → agrega la nueva compra a la lista.
+    public List<CompraUsuario> getComprasPorUsuario(Integer fkIdUsuario) {
+        return repo.findByFkIdUsuario(fkIdUsuario);
+    }
+
+    public List<CompraUsuario> getComprasPorCurso(Integer fkIdCurso) {
+        return repo.findByFkIdCurso(fkIdCurso);
+    }
+
+    // CREATE
+    @Transactional
     public CompraUsuario addCompra(CompraUsuario compra) {
-        compras.add(compra);
-        return compra;
+        // idCompra se genera automáticamente por la BD
+        return repo.save(compra);
     }
 
-    // PUT: actualizar
-   //updateCompra → busca la compra por id y actualiza sus datos.
-    public CompraUsuario updateCompra(Integer id, CompraUsuario nuevaCompra) {
-        CompraUsuario existente = getCompra(id);
-        if (existente != null) {
-            existente.setFk_idUsuario(nuevaCompra.getFk_idUsuario());
-            existente.setFk_idCurso(nuevaCompra.getFk_idCurso());
-            return existente;
-        }
-        return null;
+    // UPDATE
+    @Transactional
+    public CompraUsuario updateCompra(Integer id, CompraUsuario nueva) {
+        Optional<CompraUsuario> opt = repo.findById(id);
+        if (opt.isEmpty()) return null;
+
+        CompraUsuario existente = opt.get();
+        existente.setFkIdCurso(nueva.getFkIdUsuario());
+        existente.setFkIdCurso(nueva.getFkIdCurso());
+        return repo.save(existente);
     }
 
     // DELETE
-    //deleteCompra → elimina por id.
-    public void deleteCompra(Integer id) {
-        compras.removeIf(c -> c.getIdCompra().equals(id));
+    @Transactional
+    public boolean deleteCompra(Integer id) {
+        if (!repo.existsById(id)) return false;
+        repo.deleteById(id);
+        return true;
     }
 }
 
