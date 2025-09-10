@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="./css/style.css" />
+  <link rel="icon" href="./assets/favicon/favicon.svg?v=3" type="image/svg+xml" />
+  <link rel="icon" href="./assets/favicon/favicon.png?v=3" sizes="32x32" type="image/png" />
+  <link rel="apple-touch-icon" href="./assets/favicon/apple-touch-icon.png?v=3" sizes="180x180" />
+  <link rel="mask-icon" href="./assets/favicon/favicon.svg?v=4" color="#000000" />
+  <title>Mi perfil</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="./css/perfil.css">
+</head>
+
+<body data-bs-spy="scroll" data-bs-target="#perfilMenu" data-bs-offset="80" tabindex="0">
+
+  <header></header>
+
+  <!-- Perfil y switch de dark mode -->
+  <section class="container my-5" id="perfil">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 id="titulo-istok">Mi perfil</h2>
+
+      <!-- Switch con sol y luna -->
+      <!-- <label class="theme-switch">
+        <i class="bi bi-sun-fill sun"></i>
+        <input type="checkbox" id="modeSwitch" />
+        <span class="theme-switch-label"></span>
+        <i class="bi bi-moon-fill moon"></i>
+      </label> -->
+    </div>
+
+    <!-- Card Perfil -->
+    <div class="card shadow-sm p-3 perfil-card" id="configuracion">
+      <div class="row g-3 align-items-center">
+        <!-- Foto -->
+        <div class="col-auto">
+          <!-- Foto perfil para elegir avatares -->
+          <img id="profilePic" src="./assets/avatarPerfil/default-avatar-profile.jpg" alt="Foto perfil"
+            class="rounded-circle img-fluid" style="
+                width: 100px;
+                height: 100px;
+                object-fit: cover;
+                cursor: pointer;
+              " title="Haz click para cambiar avatar" data-bs-toggle="modal" data-bs-target="#avatarModal" />
+        </div>
+
+        <!-- Info -->
+        <div class="col">
+          <h5 class="mb-1">
+            <span id="userName">Nombre</span>
+            <i class="bi bi-pencil-square " style="cursor: pointer" data-bs-toggle="modal"
+              data-bs-target="#editNameModal"></i>
+          </h5>
+          <p class="mb-1 text-muted" id="userDesc">
+            Breve descripción del usuario
+            <i class="bi bi-pencil-square" style="cursor: pointer" data-bs-toggle="modal"
+              data-bs-target="#editDescModal"></i>
+          </p>
+          <p class="mb-0 fw-bold">
+            Correo electrónico:
+            <a href="mailto:email@email.com" id="userEmail">email@email.com</a>
+            
+          </p>
+          <p class="mb-0">
+            <button class="btn btn-link link-guinda p-0 align-baseline" type="button" data-bs-toggle="modal"
+              data-bs-target="#changePasswordModal">
+              <i class="bi bi-key me-1"></i> Cambiar contraseña
+            </button>
+
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Wishlist -->
+  <!-- Contenedor de productos -->
+  <div class="container my-5">
+    <h3 class="mb-4" id="titulo-istok">Lista de deseos</h3>
+    <div id="itemsContainer" class="row g-4">
+      <!-- Aquí se van a insertar las cards con los cursos de la wishlist -->
+    </div>
+  </div>
+
+
+  <!-- <section class="container my-5" id="wishlist">
+    <h3 class="mb-4">Wishlist</h3>
+    <div class="row g-4">
+      
+      <div class="col-12 col-sm-6 col-md-4">
+        <div class="card h-100 shadow-sm">
+          <img src="./assets/cursos/candles.jpeg" class="card-img-top" alt="Curso 1" />
+          <div class="card-body">
+            <h5 class="card-title">Velas</h5>
+            <p class="card-text">
+              Descubre el arte de fabricar velas hechas a mano, aprendiendo
+              sobre tipos de cera, moldes, fragancias y decoración. Perfecto
+              para quienes quieren crear productos únicos para uso personal o
+              para iniciar un negocio artesanal.
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-12 col-sm-6 col-md-4">
+        <div class="card h-100 shadow-sm">
+          <img src="./assets/cursos/paint.jpeg" class="card-img-top" alt="Curso 2" />
+          <div class="card-body">
+            <h5 class="card-title">Pintura</h5>
+            <p class="card-text">
+              Aprende técnicas básicas y avanzadas de pintura, desde el manejo
+              del color y las texturas hasta la creación de obras originales.
+              Ideal para quienes desean explorar su creatividad y desarrollar
+              habilidades artísticas en diferentes estilos y materiales.
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-12 col-sm-6 col-md-4">
+        <div class="card h-100 shadow-sm">
+          <img src="./assets/cursos/crochet.jpeg" class="card-img-top" alt="Curso 3" />
+          <div class="card-body">
+            <h5 class="card-title">Crochet</h5>
+            <p class="card-text">
+              Conoce las técnicas para diseñar y elaborar accesorios
+              personalizados utilizando diversos materiales. Ideal para
+              quienes disfrutan crear detalles únicos para complementar su
+              estilo o regalar.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section> -->
+
+
+  <!-- Modales para editar información -->
+  <!-- Modal para elegir avatar -->
+  <div class="modal fade" id="avatarModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content p-3">
+        <h5 class="modal-title mb-3" id="titulo-istok">Selecciona un avatar</h5>
+        <div class="d-flex justify-content-between flex-wrap gap-3">
+          <img src="./assets/avatarPerfil/zorro.png" class="avatar-select rounded-circle"
+            style="width: 100px; height: 100px; cursor: pointer" alt="Avatar 1" />
+          <img src="./assets/avatarPerfil/llama.png" class="avatar-select rounded-circle"
+            style="width: 100px; height: 100px; cursor: pointer" alt="Avatar 2" />
+          <img src="./assets/avatarPerfil/gato.png" class="avatar-select rounded-circle"
+            style="width: 100px; height: 100px; cursor: pointer" alt="Avatar 3" />
+          <img src="./assets/avatarPerfil/oso.png" class="avatar-select rounded-circle"
+            style="width: 100px; height: 100px; cursor: pointer" alt="Avatar 4" />
+          <img src="./assets/avatarPerfil/zorro3.png" class="avatar-select rounded-circle"
+            style="width: 100px; height: 100px; cursor: pointer" alt="Avatar 5" />
+          <img src="./assets/avatarPerfil/Canguro.png" class="avatar-select rounded-circle"
+            style="width: 100px; height: 100px; cursor: pointer" alt="Avatar 5" />
+          <img src="./assets/avatarPerfil/pulpo.png" class="avatar-select rounded-circle"
+            style="width: 100px; height: 100px; cursor: pointer" alt="Avatar 5" />
+          <img src="./assets/avatarPerfil/zorro4.png" class="avatar-select rounded-circle"
+            style="width: 100px; height: 100px; cursor: pointer" alt="Avatar 5" />
+        </div>
+        <button type="button" class="btn btn-secondary mt-3" data-bs-dismiss="modal">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Editar Nombre -->
+  <div class="modal fade" id="editNameModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Editar nombre</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="text" class="form-control" id="userNameInput" placeholder="Nuevo nombre" />
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">
+            Cancelar
+          </button>
+          <button class="btn btn-primary" id="saveNameBtn">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Editar Descripción -->
+  <div class="modal fade" id="editDescModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Editar descripción</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <textarea class="form-control" id="userDescInput" rows="3" placeholder="Nueva descripción"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">
+            Cancelar
+          </button>
+          <button class="btn btn-primary" id="saveDescBtn">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Editar Email -->
+  <div class="modal fade" id="editEmailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Editar correo electrónico</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="email" class="form-control" id="userEmailInput" placeholder="Nuevo correo" />
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">
+            Cancelar
+          </button>
+          <button class="btn btn-primary" id="saveEmailBtn">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Editar Contraseña -->
+  <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <form class="modal-content" id="changePasswordForm" novalidate>
+        <div class="modal-header">
+          <h5 class="modal-title" id="changePasswordLabel">Cambiar contraseña</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="currentPassword" class="form-label">Contraseña actual</label>
+            <input type="password" class="form-control" id="currentPassword" required autocomplete="current-password">
+            <div class="invalid-feedback">Ingresa tu contraseña actual.</div>
+          </div>
+
+          <div class="mb-3">
+            <label for="newPassword" class="form-label">Nueva contraseña</label>
+            <input type="password" class="form-control" id="newPassword" required
+              pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}"
+              title="Mín. 8 caracteres, con al menos 1 mayúscula, 1 minúscula y 1 número" autocomplete="new-password"
+              aria-describedby="passwordHelp">
+            <div id="passwordHelp" class="form-text">
+              Mínimo 8 caracteres, al menos 1 mayúscula, 1 minúscula y 1 número.
+            </div>
+            <div class="invalid-feedback">Debe cumplir los requisitos mínimos.</div>
+          </div>
+
+          <div class="mb-2">
+            <label for="confirmPassword" class="form-label">Confirmar nueva contraseña</label>
+            <input type="password" class="form-control" id="confirmPassword" required autocomplete="new-password">
+            <div class="invalid-feedback">Las contraseñas no coinciden.</div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-success">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <section class="container my-5" id="agregarProducto">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h3 id="titulo-istok">¿Quieres publicar un nuevo curso?</h3>
+      <button id="btnNuevoProducto" class="btn ">
+        <i class="bi bi-plus-circle me-2"></i>Agregar producto
+      </button>
+    </div>
+  </section>
+
+  <script type="module" src="./javascript/perfil.js"></script>
+  <script src="./javascript/main.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="./javascript/navbarAndFooter.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+    crossorigin="anonymous"></script>
+
+</body>
+
+</html>

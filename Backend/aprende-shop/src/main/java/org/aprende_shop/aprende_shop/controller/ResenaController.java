@@ -58,4 +58,9 @@ public class ResenaController {
 			@RequestParam(required=false) String comentarios){
 		return service.updateResena(idResena,fk_idCurso,fk_idUsuario,calificacion,comentarios);
 	}
+	
+	@GetMapping("curso/{idCurso}")
+	public List<Resena> getByCurso(@PathVariable Integer idCurso) {
+	  return service.getByCurso(idCurso);
+	}
 }

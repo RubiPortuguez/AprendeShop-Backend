@@ -1,0 +1,243 @@
+// Añade arriba del archivo:
+const API_URL_USUARIOS = "/api/usuarios/"; 
+
+
+//declaramos campos
+const iptNombre = document.getElementById("iptNombre");
+const iptCorreo = document.getElementById("iptCorreo");
+const iptTelefono = document.getElementById("iptTel");
+const iptPassword = document.getElementById("iptPassword");
+const iptConfirmPassword = document.getElementById("iptConfirmPassword");
+const selectUsuario = document.getElementById("selectUsuario");
+
+const form = document.getElementsByTagName("form").item(0);
+
+//alerta campos invalidos
+const invalidName = document.getElementById("invalidName");
+const invalidCorreo = document.getElementById("invalidCorreo");
+const invalidTelefono = document.getElementById("invalidTelefono");
+const invalidPassword = document.getElementById("invalidPassword");
+const invalidConfirmPassword = document.getElementById("invalidConfirmPassword");
+const invalidSelectUsuario = document.getElementById("invalidSelectUsuario");
+
+//boton
+const btnRegistro = document.getElementById("btnRegistro");
+//label campos
+const labelNombre = document.getElementById("labelNombre");
+const labelCorreo = document.getElementById("labelCorreo");
+const labelTelefono = document.getElementById("labelTelefono");
+const labelPassword = document.getElementById("labelPassword");
+const labelConfirmPassword = document.getElementById("labelConfirmPassword");
+const labelSelectUsuario = document.getElementById("labelSelectUsuario");
+
+//Visualizar contraseña
+const togglePassword = document.getElementById("togglePassword");
+
+//mensaje valido
+const mensajeValido = `<div class="valid-feedback" id="mensajeVal"> 
+                            Campo valido
+                        </div>`;
+
+//Mensaje validación
+function inputValido(input, nombre) {
+    input.classList.add("is-valid");
+    nombre.insertAdjacentHTML("beforeend", mensajeValido);
+}
+//validacion nombre
+function validarNombre(nombre) {
+    const regex = new RegExp("^[A-Za-zÁÉÍÓÚÜáéíóúüÑñ\\s]+$");
+    return regex.test(nombre);
+}
+//validacion correo
+function validarCorreo(correo) {
+    const regex = new RegExp(/(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/);
+    return regex.test(correo);
+}
+//validación numero telefonico
+function validarTelefono(telefono) {
+    const regex = new RegExp(`^(?!0+$)(?!1+$)(?!0*1+0*$)[1-9][0-9]{9}$`);
+    return regex.test(telefono) && !/^0+$/.test(telefono.replace(/\D/g, '')); //no acepta solo ceros
+}
+// validación contraseña (mínimo 8, 1 número, 1 letra, 1 caracter especial)
+function validarPassword(password) {
+    const regex = /^(?=.*?[A-ZÁÉÍÓÚÜÑ])(?=.*?[a-záéíóúüñ])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$/;
+    return regex.test(password);
+}
+//validación confirmar contraseña
+function confirmarPassword(password, confirmPassword) {
+    return ((password === confirmPassword) && (password != "") && (password != null));
+}
+//Validación tipo usuario
+function validarTipoUsuario(tipo) {
+    return tipo !== "";
+}
+
+//orejita boton
+btnRegistro.addEventListener("click", function (event) {
+    event.preventDefault();
+    let isValid = true;
+    //ocultar alertas invalido
+    invalidName.style.display = "none";
+    invalidCorreo.style.display = "none";
+    invalidTelefono.style.display = "none";
+    invalidPassword.style.display = "none";
+    invalidConfirmPassword.style.display = "none";
+    invalidSelectUsuario.style.display = "none";
+
+    //ocultar alertas valido
+    document.querySelectorAll(".valid-feedback").forEach(el => el.remove());
+
+    //limpiar clases previas
+    iptNombre.classList.remove("is-valid", "is-invalid");
+    iptCorreo.classList.remove("is-valid", "is-invalid");
+    iptTelefono.classList.remove("is-valid", "is-invalid");
+    iptPassword.classList.remove("is-valid", "is-invalid");
+    iptConfirmPassword.classList.remove("is-valid", "is-invalid");
+    selectUsuario.classList.remove("is-valid", "is-invalid");
+
+    //condicionales
+    if (!validarNombre(iptNombre.value)) {
+        iptNombre.classList.add("is-invalid");
+        invalidName.style.display = "block";
+        isValid &= false;
+    } else {
+        inputValido(iptNombre, labelNombre);
+        isValid &= true;
+    }//validarNombre
+
+    if (!validarCorreo(iptCorreo.value)) {
+        iptCorreo.classList.add("is-invalid");
+        invalidCorreo.style.display = "block";
+        isValid &= false;
+    } else {
+        inputValido(iptCorreo, labelCorreo);
+        isValid &= true;
+    }//validarCorreo
+
+    if (!validarTelefono(iptTelefono.value)) {
+        iptTelefono.classList.add("is-invalid");
+        invalidTelefono.style.display = "block";
+        isValid &= false;
+    } else {
+        inputValido(iptTelefono, labelTelefono);
+        isValid &= true;
+    }//validarTelefono
+
+    if (!validarPassword(iptPassword.value)) {
+        iptPassword.classList.add("is-invalid");
+        invalidPassword.style.display = "block";
+        isValid &= false;
+    } else {
+        inputValido(iptPassword, labelPassword);
+        isValid &= true;
+    }//validarPassword
+
+    if (!confirmarPassword(iptPassword.value, iptConfirmPassword.value)) {
+        iptConfirmPassword.classList.add("is-invalid");
+        invalidConfirmPassword.style.display = "block";
+        isValid &= false;
+    } else {
+        inputValido(iptConfirmPassword, labelConfirmPassword);
+        isValid &= true;
+    }//confirmarPassword
+
+    if (!validarTipoUsuario(selectUsuario.value)) {
+        selectUsuario.classList.add("is-invalid");
+        invalidSelectUsuario.style.display = "block";
+        isValid &= false;
+    } else {
+        selectUsuario.classList.remove("is-invalid");
+        selectUsuario.classList.add("is-valid");
+        isValid &= true;
+    }//validarTipoUsuario
+
+	if (isValid) {
+	  Swal.fire({
+	    title: '¿Registrarse?',
+	    html: `Estás a punto de registrarte`,
+	    icon: 'question',
+	    showCancelButton: true,
+	    confirmButtonColor: '#00b19a',
+	    cancelButtonColor: '#d33',
+	    confirmButtonText: 'Registrarme',
+	    cancelButtonText: 'Cancelar'
+	  }).then(async (result) => {
+	    if (!result.isConfirmed) return;
+
+	    // Mapear tipo de usuario a ES/TA si el <select> trae texto
+	    const mapTU = { ESTUDIANTE: "ES", TALLERISTA: "TA" };
+	    const tipoUsuario = mapTU[(selectUsuario.value || "").toUpperCase()] || "ES";
+
+	    // Payload tal como lo espera tu backend (email/password)
+	    const payload = {
+	      nombre:   iptNombre.value.trim(),
+	      email:    iptCorreo.value.trim().toLowerCase(),
+	      telefono: iptTelefono.value.trim(),
+	      password: iptPassword.value,
+	      tipoUsuario,
+	      estado: 1
+	    };
+
+	    try {
+	      const resp = await fetch(API_URL_USUARIOS, {
+	        method: "POST",
+	        headers: { "Content-Type": "application/json" },
+	        body: JSON.stringify(payload)
+	      });
+
+	      // Lee el cuerpo siempre como texto para depurar mejor
+	      const raw = await resp.text();
+	      if (!resp.ok) {
+	        let msg = raw;
+	        try { msg = JSON.parse(raw).message || raw; } catch {}
+	        if (resp.status === 409) msg = "El correo ya está registrado.";
+	        throw new Error(`Error ${resp.status}: ${msg}`);
+	      }
+
+	      // Éxito
+	      await Swal.fire({
+	        title: '¡Registro exitoso!',
+	        text:  'Tu cuenta ha sido creada correctamente',
+	        icon:  'success',
+	        confirmButtonColor: '#00b19a'
+	      });
+
+	      // Limpieza visual y de formulario
+	      form.reset();
+	      [iptNombre, iptCorreo, iptTelefono, iptPassword, iptConfirmPassword, selectUsuario]
+	        .forEach(el => el.classList.remove("is-valid","is-invalid"));
+	      document.querySelectorAll(".valid-feedback").forEach(el => el.remove());
+	      invalidName.style.display = "none";
+	      invalidCorreo.style.display = "none";
+	      invalidTelefono.style.display = "none";
+	      invalidPassword.style.display = "none";
+	      invalidConfirmPassword.style.display = "none";
+	      invalidSelectUsuario.style.display = "none";
+	      iptPassword.type = "password";
+	      iptConfirmPassword.type = "password";
+	      togglePassword.classList.add("bi-eye");
+	      togglePassword.classList.remove("bi-eye-slash");
+
+	      // Redirige al login
+	      window.location.href = './iniciarSesion.html';
+	    } catch (e) {
+	      console.error("Error registrando usuario:", e);
+	      Swal.fire({
+	        title: 'Error',
+	        text: e.message || 'No se pudo registrar el usuario',
+	        icon: 'error',
+	        confirmButtonColor: '#00b19a'
+	      });
+	    }
+	  });
+	}
+
+});//orejita boton
+
+togglePassword.addEventListener("click", () => {
+    const type = iptPassword.type === "password" ? "text" : "password";
+    iptPassword.type = type;
+    iptConfirmPassword.type = type;
+    togglePassword.classList.toggle("bi-eye");
+    togglePassword.classList.toggle("bi-eye-slash");
+});
