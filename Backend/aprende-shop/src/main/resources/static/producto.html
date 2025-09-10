@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="icon" href="./assets/favicon/favicon.svg?v=3" type="image/svg+xml">
+    <link rel="icon" href="./assets/favicon/favicon.png?v=3" sizes="32x32" type="image/png">
+    <link rel="apple-touch-icon" href="./assets/favicon/apple-touch-icon.png?v=3" sizes="180x180">
+    <link rel="mask-icon" href="./assets/favicon/favicon.svg?v=4" color="#000000">
+    <title>AprendeShop</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 ">
+                <div id="imgContainer" class="containerProd">
+                    <button class="btn btn-light btn-sm rounded-circle position-absolute top-0 start-0 m-2 btn-wishlist"
+                        data-id="${product.idProd}" id="btnWishlistProduct"> <i class="bi bi-heart"></i> </button>
+                    <!-- <button id="corazon"> <i class="bi bi-heart-fill"></i> </button> -->
+                    <!-- <button id="corazon2"> <i class="bi bi-heart"></i> </button> -->
+                </div>
+
+            </div>
+            <div class="col-lg-6">
+                <div id="contenidoProducto">
+                    <h1 id="nombreProducto"> </h1>
+                    <h2 id="precioProducto"> </h2>
+
+                    <div id="switchKitWrapper" class="form-check form-switch my-2 d-none">
+					  <input class="form-check-input" type="checkbox" id="checkNativeSwitch">
+					  <label class="form-check-label my-1" for="checkNativeSwitch" id="switchKitLabel">
+					    Incluir materiales
+					  </label>
+					</div>
+
+                    <div>
+                        <p class="d-inline-flex gap-1">
+                            <button class=" btn-primary btnMateriales botonHide" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                                Materiales
+                            </button>
+                        </p>
+                        <div class="collapse" id="collapseExample">
+                            <div class="border" id="card-materiales"></div>
+                        </div>
+                    </div>
+
+                    <div class="row row-cols-2 row-cols-md-4 g-2" id="alertaMargen">
+                        <div class="col">
+                            <div class="alertaProducto " id="categoriaContainer" role="alert"></div>
+                        </div>
+                        <div class="col">
+                            <div class="alertaProducto " id="nivelContainer" role="alert"></div>
+                        </div>
+                        <div class="col">
+                            <div class="alertaProducto " id="idiomaContainer" role="alert"></div>
+                        </div>
+
+                        <div class="col">
+                            <div class="alertaProducto" id="duracionContainer" role="alert"></div>
+                        </div>
+                    </div>
+
+                    <div class="card-body card-producto">
+                        <p id="descripcionProducto"></p>
+                    </div>
+
+                    <button class="btn-primary btnComprar botonHide" type="button" id="liveToastBtn">Comprar</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CARRUSEL DE COMENTARIOS -->
+    <div class="container py-5">
+        <h2 class="text-center mb-5" id="titulo-istok">Opiniones de nuestros clientes</h2>
+
+        <!-- Carrusel -->
+        <div id="commentsCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner" id="carousel-inner">
+                <!-- Las tarjetas se insertarán aquí con JS -->
+            </div>
+
+            <!-- Controles -->
+            <!-- <button class="carousel-control-prev" type="button" data-bs-target="#commentsCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon bg-dark rounded-circle p-3"></span>
+                <span class="visually-hidden">Anterior</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#commentsCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon bg-dark rounded-circle p-3"></span>
+                <span class="visually-hidden">Siguiente</span>
+            </button> -->
+        </div>
+    </div>
+
+    <!-- Alerta de producto agregado -->
+    <div class="position-fixed bottom-0 end-0 p-3">
+        <div id="liveToast" class="toast" role="alert">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <img src="./assets/favicon/favicon.svg?v=3" width="25px" height="25px" class="rounded me-2"
+                        alt="...">
+                    <strong class="me-auto">Articulo agregado al carrito.</strong>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="./javascript/main.js"></script>
+    <script src="./javascript/navbarAndFooter.js"></script>
+    <script type="module" src="./javascript/producto.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

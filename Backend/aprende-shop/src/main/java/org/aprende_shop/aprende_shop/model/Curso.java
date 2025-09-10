@@ -38,7 +38,7 @@ public class Curso {
 	private String imagenPrincipal;
 	@Column(nullable=false)
 	private String materiales;
-	@Column(name="galeriaadicional",nullable=false)
+	@Column(name="galeriaadicional",nullable=true)
 	private String galeriaAdicional;
 	@Column(name="incluyekit",nullable=false)
 	private Byte incluyeKit;
@@ -46,13 +46,15 @@ public class Curso {
 	private String descripcionKit;
 	@Column(nullable=false)
 	private Byte estado;
+	@Column(name = "preciokit")
+	private Double precioKit;
 	
 	private static long total = 0;
 
 	public Curso(String nombreCurso, String descripcionCorta, String descripcionDetallada, String categoria,
 			String nivelDificultad, Integer duracionTotal, String idioma, Double precio, Integer valoracionInicial,
 			String imagenPrincipal, String materiales, String galeriaAdicional, Byte incluyeKit,
-			String descripcionKit, Byte estado) {
+			String descripcionKit, Byte estado, Double precioKit) {
 		super();
 		this.nombreCurso = nombreCurso;
 		this.descripcionCorta = descripcionCorta;
@@ -69,6 +71,7 @@ public class Curso {
 		this.incluyeKit = incluyeKit;
 		this.descripcionKit = descripcionKit;
 		this.estado = estado;
+		this.precioKit = precioKit;
 		
 //		Curso.total++;
 //		this.idCurso = Curso.total;
@@ -201,6 +204,15 @@ public class Curso {
 
 	public void setEstado(Byte estado) {
 		this.estado = estado;
+	}
+	
+
+	public Double getPrecioKit() {
+		return precioKit;
+	}
+
+	public void setPrecioKit(Double precioKit) {
+		this.precioKit = precioKit;
 	}
 
 	@Override

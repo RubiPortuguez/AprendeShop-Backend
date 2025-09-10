@@ -24,9 +24,13 @@ public class ResenaService {
 	//GET
 	public Resena getResena(Integer idResena) {
 		return reseRepository.findById(idResena).orElseThrow(
-				() -> new IllegalArgumentException("El producto con el id ["
+				() -> new IllegalArgumentException("La reseña con el id ["
 						+  idResena +"] no existe"));
 	} // Un solo curso
+	
+	 public List<Resena> getByCurso(Integer idCurso) {
+	        return reseRepository.findByFkIdCurso(idCurso);
+	    }
 	
 	//DELETE
 	public Resena deleteResena(Integer idResena) {
@@ -48,8 +52,8 @@ public class ResenaService {
 		Resena tmpRes= null;
 		if(reseRepository.existsById(idResena)) {
 			Resena res= reseRepository.findById(idResena).get();
-				if(fk_idCurso!=null) res.setFk_idCurso(fk_idCurso);
-				if(fk_idUsuario!=null) res.setFk_idUsuario(fk_idUsuario);
+				if(fk_idCurso!=null) res.setFkIdCurso(fk_idCurso);
+				if(fk_idUsuario!=null) res.setFkIdUsuario(fk_idUsuario);
 				if(calificacion!=null) res.setCalificacion(calificacion);
 				if(comentarios!=null) res.setComentarios(comentarios);
 				reseRepository.save(res);

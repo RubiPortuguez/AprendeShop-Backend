@@ -18,9 +18,9 @@ public class Resena {
 	@Column(name = "idresena")
 	private Integer idResena;
     @Column (name = "fk_idcurso")
-	private Integer fk_idCurso;
+	private Integer fkIdCurso;
     @Column (name = "fk_idusuario")
-	private Integer fk_idUsuario;
+	private Integer fkIdUsuario;
 	@Column (name = "calificacion")
 	private Integer calificacion;
 	@Column (name = "comentario")
@@ -30,8 +30,8 @@ public class Resena {
 	//Constructor
 	public Resena(Integer fk_idCurso, Integer fk_idUsuario, Integer calificacion, String comentarios) {
 		super();
-		this.fk_idCurso = fk_idCurso;
-		this.fk_idUsuario = fk_idUsuario;
+		this.fkIdCurso = fk_idCurso;
+		this.fkIdUsuario = fk_idUsuario;
 		this.calificacion = calificacion;
 		this.comentarios = comentarios;
 	}
@@ -59,24 +59,27 @@ public class Resena {
 		return idResena;
 	}
 
-	public Integer getFk_idCurso() {
-		return fk_idCurso;
-	}
-	public void setFk_idCurso(Integer fk_idCurso) {
-		this.fk_idCurso = fk_idCurso;
+	
+	public Integer getFkIdCurso() {
+		return fkIdCurso;
 	}
 
-	public Integer getFk_idUsuario() {
-		return fk_idUsuario;
+	public void setFkIdCurso(Integer fkIdCurso) {
+		this.fkIdCurso = fkIdCurso;
 	}
-	public void setFk_idUsuario(Integer fk_idUsuario) {
-		this.fk_idUsuario = fk_idUsuario;
+
+	public Integer getFkIdUsuario() {
+		return fkIdUsuario;
 	}
-	
+
+	public void setFkIdUsuario(Integer fkIdUsuario) {
+		this.fkIdUsuario = fkIdUsuario;
+	}
+
 	//toString
 	@Override
 	public String toString() {
-		return "Resena [id=" + idResena + ", fk_idCurso=" + fk_idCurso + ", fk_idUsuario=" + fk_idUsuario + ", calificacion="
+		return "Resena [id=" + idResena + ", fk_idCurso=" + fkIdCurso + ", fk_idUsuario=" + fkIdUsuario + ", calificacion="
 				+ calificacion + ", comentarios=" + comentarios + "]";
 	}
 	
