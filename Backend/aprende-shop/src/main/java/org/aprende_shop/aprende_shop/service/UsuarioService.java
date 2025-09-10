@@ -6,12 +6,16 @@ import java.util.Optional;
 import org.aprende_shop.aprende_shop.model.Usuario;
 import org.aprende_shop.aprende_shop.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UsuarioService {
 
 	private final UsuarioRepository repository;
+	
+	@Autowired
+	private PasswordEncoder encoder;
 	
 	@Autowired
 	public UsuarioService (UsuarioRepository repository) {
@@ -38,7 +42,9 @@ public class UsuarioService {
 	public Usuario addUser(Usuario usuario) {
 		Optional<Usuario> tmpUser = repository.findByEmail(usuario.getEmail());
 		if (tmpUser.isEmpty()) {
-			repository.save(usuario);
+			usuario.setPassword(encoder.encode(usuario.getPassword()) );
+			return repository.save(usuario);
+
 		} else {
 			usuario = null;
 		}
@@ -52,7 +58,7 @@ public class UsuarioService {
 			if (nombre != null) usuario.setNombre(nombre);
 			if (email != null) usuario.setEmail(email);
 			if (telefono != null) usuario.setTelefono(telefono);
-			if (password != null) usuario.setPassword(password);
+			if (password != null) usuario.setPassword(encoder.encode(password));
 			if (tipoUsuario != null) usuario.setTipoUsuario(tipoUsuario);
 			if (tipoUsuario != null) usuario.setEstado(estado);
 			repository.save(usuario);
@@ -60,5 +66,17 @@ public class UsuarioService {
 		}
 		return tmpUsuario;
 	}//updateUser
+
+	public boolean validateUser(Usuario usuario) {
+		Optional<Usuario> user = repository.findByEmail(usuario.getEmail());
+		if (user.isPresent()) {
+			Usuario tmpUser = user.get();
+			if (encoder.matches(usuario.getPassword(), tmpUser.getPassword())) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
 	
 }
