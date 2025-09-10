@@ -252,7 +252,7 @@ const REVIEWS_URL = "/api/review/curso/";
             <div class="card-body">
               <h6 class="card-title text-center">${nombre}</h6>
               <div class="text-center">${starsRandom(c.calificacion)}</div>
-              <p class="card-text">"${c.comentario}"</p>
+              <p class="card-text text-center m-2">"${c.comentario}"</p>
             </div>
           </div>`;
       });

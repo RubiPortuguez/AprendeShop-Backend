@@ -38,7 +38,7 @@ public class Curso {
 	private String imagenPrincipal;
 	@Column(nullable=false)
 	private String materiales;
-	@Column(name="galeriaadicional",nullable=false)
+	@Column(name="galeriaadicional",nullable=true)
 	private String galeriaAdicional;
 	@Column(name="incluyekit",nullable=false)
 	private Byte incluyeKit;

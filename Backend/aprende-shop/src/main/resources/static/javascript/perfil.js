@@ -83,7 +83,7 @@ const API_BASE = (typeof window !== "undefined" && window.API_BASE)
   ? window.API_BASE
   : (location.origin.includes(":8080") ? "" : "http://localhost:8080");
 
-if (typeof window !== "undefined") window.API_BASE = API_BASE; // opcional, por si otra parte la necesita
+if (typeof window !== "undefined") window.API_BASE = API_BASE;
 
 // Endpoints
 const API_URL_USUARIOS = `${API_BASE}/api/usuarios/`;
@@ -99,17 +99,15 @@ function normalizeUser(u = {}) {
     password:    u.password ?? u.contrasena ?? "",
     tipoUsuario: u.tipoUsuario ?? "ES",
     estado:      Number(u.estado ?? 1),
-    // campos solo front:
     avatar:      u.avatar ?? null,
     descripcion: u.descripcion ?? null,
   };
 }
 
-// PUT parcial; envía solo los campos que cambian (form-url-encoded para @RequestParam)
+// PUT parcial; envía solo los campos que cambian
 async function putUsuario(id, partial) {
   const url = API_URL_USUARIOS + id;
 
-  // Por seguridad, NO permitir cambiar email desde front:
   if ("email" in partial) delete partial.email;
 
   const params = new URLSearchParams();
@@ -130,7 +128,7 @@ async function putUsuario(id, partial) {
     if (res.status === 409) msg = "El correo ya está registrado.";
     throw new Error(`Error ${res.status}: ${msg}`);
   }
-  return raw ? JSON.parse(raw) : null; // si tu servicio regresa el Usuario
+  return raw ? JSON.parse(raw) : null;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -145,28 +143,97 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   let sesion = normalizeUser(JSON.parse(sesionStr));
 
+  //console.log("[PERFIL] Sesión cargada:", sesion);
+
+  // --- BOTÓN AGREGAR PRODUCTO/CURSO ---
+  const btnAgregarProducto = $("#btnNuevoProducto");
+  
+  if (btnAgregarProducto) {
+    //console.log("[PERFIL] Botón agregar producto encontrado");
+    
+    btnAgregarProducto.addEventListener("click", (e) => {
+      e.preventDefault();
+      //console.log("[PERFIL] Click en botón agregar producto");
+      
+      // Verificar si el usuario es tallerista
+      if (sesion.tipoUsuario !== "TA") {
+        if (window.Swal) {
+          Swal.fire({
+            icon: "warning",
+            title: "Acceso denegado",
+            text: "Solo los talleristas pueden agregar cursos",
+            confirmButtonColor: "#00b19a"
+          });
+        } else {
+          alert("Solo los talleristas pueden agregar cursos");
+        }
+        return;
+      }
+      
+      // Redirigir a la página de agregar producto
+      console.log("[PERFIL] Redirigiendo a agregar producto...");
+      window.location.href = "./formularioProducto.html";
+    });
+  } else {
+    console.warn("[PERFIL] No se encontró el botón agregar producto");
+  }
+
+  // --- También buscar por diferentes selectores comunes ---
+  const possibleSelectors = [
+    "#agregarProducto",
+    ".agregar-producto",
+    "[data-action='add-product']",
+    ".btn[href*='agregar']",
+    ".add-product-btn"
+  ];
+
+  possibleSelectors.forEach(selector => {
+    const btn = $(selector);
+    if (btn && !btn.dataset.listenerAdded) {
+      console.log("[PERFIL] Encontrado botón con selector:", selector);
+      btn.dataset.listenerAdded = "true";
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (sesion.tipoUsuario !== "TA") {
+          if (window.Swal) {
+            Swal.fire({
+              icon: "warning", 
+              title: "Acceso denegado",
+              text: "Solo los talleristas pueden agregar cursos"
+            });
+          }
+          return;
+        }
+        window.location.href = "./formularioProducto.html";
+      });
+    }
+  });
+
   // --- Pintar datos básicos ---
   const nombreEl = $("#userName");
-  const emailEl  = $("#userEmail");     // <a>
-  const rolEl    = $("#userRole");      // opcional
+  const emailEl  = $("#userEmail");
+  const rolEl    = $("#userRole");
 
   if (nombreEl) nombreEl.textContent = sesion.nombre || "—";
-  if (emailEl)  { emailEl.textContent = sesion.email; emailEl.href = `mailto:${sesion.email}`; }
+  if (emailEl)  { 
+    emailEl.textContent = sesion.email; 
+    emailEl.href = `mailto:${sesion.email}`; 
+  }
   if (rolEl) {
     const MAP = { ES: "Estudiante", TA: "Tallerista" };
     rolEl.textContent = MAP[sesion.tipoUsuario] || sesion.tipoUsuario || "—";
   }
 
-  // Si existen controles de "editar email" en el HTML, esconderlos
+  // Si existen controles de "editar email", esconderlos
   $("#btnEditEmail")?.remove();
   $("#editEmailModal")?.remove();
 
-  // --- Avatar (solo local; no hay columna en BD) ---
+  // --- Avatar ---
   const profilePic   = $("#profilePic");
   const headerAvatar = $("#headerAvatar");
   const avatarKey    = sesion.id ? `userAvatar:${sesion.id}` : "userAvatar:anon";
-  const storedAvatar = localStorage.getItem(avatarKey) || localStorage.getItem("userAvatar"); // compat
-  const avatarUrl    = sesion.avatar || storedAvatar || "./assets/avatars/default.png";
+  const storedAvatar = localStorage.getItem(avatarKey) || localStorage.getItem("userAvatar");
+  const avatarUrl    = sesion.avatar || storedAvatar || "./assets/avatarPerfil/default-avatar-profile.jpg";
 
   if (profilePic)   profilePic.src   = avatarUrl;
   if (headerAvatar) headerAvatar.src = avatarUrl;
@@ -176,28 +243,26 @@ document.addEventListener("DOMContentLoaded", () => {
       const url = img.src;
       if (profilePic)   profilePic.src   = url;
       if (headerAvatar) headerAvatar.src = url;
-      sesion.avatar = url; // guardar en sesión local
+      sesion.avatar = url;
       localStorage.setItem("usuarioSesion", JSON.stringify(sesion));
       localStorage.setItem(avatarKey, url);
-      localStorage.setItem("userAvatar", url); // compat
+      localStorage.setItem("userAvatar", url);
       const modalEl = document.getElementById("avatarModal");
       if (modalEl && window.bootstrap) bootstrap.Modal.getOrCreateInstance(modalEl).hide();
     });
   });
 
-  // --- Descripción breve (solo front/localStorage) ---
-  const descSpan  = document.getElementById("userDescText"); // <span id="userDescText">
-  const descP     = document.getElementById("userDesc");     // o <p id="userDesc">Texto <span>...</span>
+  // --- Descripción breve ---
+  const descSpan  = document.getElementById("userDescText");
+  const descP     = document.getElementById("userDesc");
   const descKey   = sesion.id ? `userDesc:${sesion.id}` : "userDesc:anon";
   let savedDesc   = sesion.descripcion || localStorage.getItem(descKey) || "";
 
-  // Pintar descripción si existe
   if (savedDesc) {
     if (descSpan) descSpan.textContent = savedDesc;
     else if (descP && descP.firstChild) descP.firstChild.nodeValue = savedDesc + " ";
   }
 
-  // Guardar descripción desde modal/botón
   $("#saveDescBtn")?.addEventListener("click", () => {
     const val = ($("#userDescInput")?.value || "").trim();
     if (val.length > 250) {
@@ -206,11 +271,9 @@ document.addEventListener("DOMContentLoaded", () => {
         : alert('Máximo 250 caracteres');
     }
 
-    // Actualiza UI
     if (descSpan) descSpan.textContent = val;
     else if (descP && descP.firstChild) descP.firstChild.nodeValue = val + " ";
 
-    // Guarda por usuario + en sesión
     localStorage.setItem(descKey, val);
     sesion.descripcion = val;
     localStorage.setItem("usuarioSesion", JSON.stringify(sesion));
@@ -220,11 +283,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (modalEl && window.bootstrap) bootstrap.Modal.getOrCreateInstance(modalEl).hide();
   });
 
-  // Prefill del input de nombre (si existiera)
+  // --- Guardar NOMBRE ---
   const nameInput = $("#userNameInput");
   if (nameInput) nameInput.value = sesion.nombre || "";
 
-  // --- Guardar NOMBRE (PUT) ---
   $("#saveNameBtn")?.addEventListener("click", async () => {
     const val = (nameInput?.value || "").trim();
     if (val.length < 2)  return Swal.fire({icon:"warning", title:"Nombre muy corto"});
@@ -233,7 +295,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       const updated = await putUsuario(sesion.id, { nombre: val });
-      // si el backend devuelve el usuario, actualizamos desde ahí
       sesion = updated ? normalizeUser(updated) : { ...sesion, nombre: val };
       localStorage.setItem("usuarioSesion", JSON.stringify(sesion));
       if (nombreEl) nombreEl.textContent = sesion.nombre;
@@ -246,7 +307,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // --- Cambio de CONTRASEÑA (PUT) ---
+  // --- Cambio de CONTRASEÑA ---
   const formPwd = $("#changePasswordForm");
   if (formPwd) {
     const currentPassword = $("#currentPassword");
@@ -295,21 +356,16 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // (Opcional) Cerrar sesión
+  // --- Cerrar sesión ---
   $("#btnLogout")?.addEventListener("click", () => {
     localStorage.removeItem("usuarioSesion");
     window.location.href = "./iniciarSesion.html";
   });
 });
 
+// ------------- WISHLIST FUNCTIONALITY -----------------
 
-
-// ------------- wishlist (desde la BD) -----------------
-
-// IMPORTA solo helpers de la UI
-import { addItem, redirection } from "./clasesCatalogo.js";
-
-// Normaliza lo que viene del backend a claves/tipos del front
+// Normaliza lo que viene del backend
 function normalizeCurso(c) {
   return {
     ...c,
@@ -319,17 +375,15 @@ function normalizeCurso(c) {
   };
 }
 
-// --- State ---
-let products = [];                 // lista completa desde la BD
-let productsById = new Map();      // índice rápido por idCurso
-
-// --- Wishlist en LS (IDs numéricos) ---
+// State
+let products = [];
+let productsById = new Map();
 let wishlist = JSON.parse(localStorage.getItem("wishlist") || "[]").map(Number);
 
-// --- DOM ---
+// DOM
 const itemsContainer = document.getElementById("itemsContainer");
 
-// --- Carga cursos de la BD ---
+// Cargar cursos de la BD
 async function loadProducts() {
   try {
     const res = await fetch(API_URL_CURSOS, { method: "GET" });
@@ -353,7 +407,7 @@ async function loadProducts() {
   }
 }
 
-// --- Verificar integridad de la wishlist ---
+// Verificar integridad de la wishlist
 function verificarWishlist() {
   const filtrada = wishlist.filter(id => productsById.has(id));
   if (filtrada.length !== wishlist.length) {
@@ -363,7 +417,7 @@ function verificarWishlist() {
   }
 }
 
-// --- Mostrar cursos de la wishlist ---
+// Mostrar cursos de la wishlist
 function mostrarCursosWishlist() {
   if (!itemsContainer) return;
   itemsContainer.innerHTML = "";
@@ -373,48 +427,71 @@ function mostrarCursosWishlist() {
     return;
   }
 
-  console.log("[WISHLIST] IDs:", wishlist);
+  //console.log("[WISHLIST] IDs:", wishlist);
 
-  // Mantiene el orden de la wishlist
+  // Importar dinámicamente solo si existe
+  import('./clasesCatalogo.js').then(module => {
+    const { addItem, redirection } = module;
+    
+    wishlist.forEach(id => {
+      const product = productsById.get(id);
+      if (product) {
+        addItem(product);
+      } else {
+        console.warn("[WISHLIST] Curso no encontrado (id =", id, ")");
+      }
+    });
+    
+    renderWishlistItems(redirection);
+  }).catch(err => {
+    console.error("[WISHLIST] Error importando clasesCatalogo.js:", err);
+    // Fallback sin las funciones del catálogo
+    renderBasicWishlist();
+  });
+}
+
+function renderBasicWishlist() {
   wishlist.forEach(id => {
     const product = productsById.get(id);
     if (product) {
-      addItem(product); // usa tu card del catálogo (muestra precioKit si aplica)
-    } else {
-      console.warn("[WISHLIST] Curso no encontrado (id =", id, ")");
+      const div = document.createElement("div");
+      div.className = "col-md-4 mb-3";
+      div.innerHTML = `
+        <div class="card">
+          <img src="${product.imagenPrincipal || './assets/default.jpg'}" class="card-img-top" alt="${product.nombreCurso}">
+          <div class="card-body">
+            <h5 class="card-title">${product.nombreCurso}</h5>
+            <p class="card-text">${product.descripcionCorta}</p>
+            <p class="text-primary fw-bold">$${product.precio}</p>
+            <button class="btn btn-danger btn-sm" onclick="quitarCursoWishlist(${id}); renderWishlist();">
+              Quitar de favoritos
+            </button>
+          </div>
+        </div>
+      `;
+      itemsContainer.appendChild(div);
     }
   });
 }
 
-// --- Quitar curso de la wishlist ---
-function quitarCursoWishlist(id) {
-  wishlist = wishlist.filter(prodId => prodId !== id);
-  localStorage.setItem("wishlist", JSON.stringify(wishlist));
-  console.log("[WISHLIST] Removido", id, "->", wishlist);
-}
-
-// --- Render + listeners en las cards recién renderizadas ---
-function renderWishlist() {
-  mostrarCursosWishlist();
-
+function renderWishlistItems(redirection) {
   // Redirección al producto
   const cards = document.querySelectorAll(".card-product");
   cards.forEach(card => {
     const btn = card.querySelector(".btn-wishlist");
     if (!btn) return;
     const id = Number(btn.dataset.id);
-    redirection(card, id);
+    if (redirection) redirection(card, id);
   });
 
-  // Botón corazón: quitar de wishlist (y re-render)
+  // Botón corazón: quitar de wishlist
   const btnsWishlist = document.querySelectorAll(".btn-wishlist");
-  console.log("[WISHLIST] Botones:", btnsWishlist.length);
+  //console.log("[WISHLIST] Botones:", btnsWishlist.length);
 
   btnsWishlist.forEach(btn => {
     const id = Number(btn.dataset.id);
     const icon = btn.querySelector("i");
 
-    // Estado visual asegurado (relleno porque están en wishlist)
     icon?.classList?.replace("bi-heart", "bi-heart-fill");
 
     btn.onclick = (ev) => {
@@ -426,7 +503,19 @@ function renderWishlist() {
   });
 }
 
-// --- Ejecuta SOLO en perfil.html ---
+// Quitar curso de wishlist
+function quitarCursoWishlist(id) {
+  wishlist = wishlist.filter(prodId => prodId !== id);
+  localStorage.setItem("wishlist", JSON.stringify(wishlist));
+  //console.log("[WISHLIST] Removido", id, "->", wishlist);
+}
+
+// Render wishlist
+function renderWishlist() {
+  mostrarCursosWishlist();
+}
+
+// Ejecutar solo en perfil.html
 if (window.location.pathname.includes("perfil.html")) {
   loadProducts();
 }
