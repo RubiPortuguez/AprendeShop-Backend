@@ -1,79 +1,3 @@
-// //Script Dark Mode + Modales 
-//   window.addEventListener("DOMContentLoaded", () => {
-//     const savedName = localStorage.getItem("userName");
-//     if (savedName)
-//       document.getElementById("userName").textContent = savedName;
-
-//     const savedDesc = localStorage.getItem("userDesc");
-//     if (savedDesc)
-//       document.getElementById("userDesc").firstChild.textContent =
-//         savedDesc + " ";
-
-//     const savedEmail = localStorage.getItem("userEmail");
-//     if (savedEmail) {
-//       document.getElementById("userEmail").textContent = savedEmail;
-//       document.getElementById("userEmail").href = "mailto:" + savedEmail;
-//     }
-
-//     // Cargar avatar guardado si tienes avatar con id profilePic
-//     const savedAvatar = localStorage.getItem("userAvatar");
-//     if (savedAvatar) {
-//       document.getElementById("profilePic").src = savedAvatar;
-//       if (document.getElementById("headerAvatar"))
-//         document.getElementById("headerAvatar").src = savedAvatar;
-//     }
-//   });
-
-//   const switchMode = document.getElementById("modeSwitch");
-
-//   // Aplicar preferencia al cargar con localStorage
-//   if (localStorage.getItem("theme") === "dark") {
-//     applyDarkMode(true);
-//     switchMode.checked = true;
-//   }
-
-//   // Evento cambio de tema
-//   switchMode.addEventListener("change", () => {
-//     if (switchMode.checked) {
-//       applyDarkMode(true);
-//       localStorage.setItem("theme", "dark");
-//     } else {
-//       applyDarkMode(false);
-//       localStorage.setItem("theme", "light");
-//     }
-//   });
-
-//   function applyDarkMode(enable) {
-//     document.body.classList.toggle("bg-dark", enable);
-//     document.body.classList.toggle("text-white", enable);
-
-//     // Tarjetas
-//     document.querySelectorAll(".card").forEach((card) => {
-//       card.classList.toggle("bg-dark", enable);
-//       card.classList.toggle("text-white", enable);
-//     });
-
-//     // Descripción (para que no se quede gris en dark mode)
-//     document.querySelectorAll("#userDesc").forEach((desc) => {
-//       if (enable) {
-//         desc.classList.remove("text-muted");
-//         desc.classList.add("text-light");
-//       } else {
-//         desc.classList.remove("text-light");
-//         desc.classList.add("text-muted");
-//       }
-//     });
-
-//     // Íconos de edición (para que se vean en dark mode)
-//     document.querySelectorAll(".bi-pencil-square").forEach((icon) => {
-//       if (enable) {
-//         icon.style.color = "#fff";
-//       } else {
-//         icon.style.color = "";
-//       }
-//     });
-//   }
-
 // ===== PERFIL + PUT a la BD =====
 
 // Evita CORS si el front no corre en 8080
@@ -88,6 +12,24 @@ if (typeof window !== "undefined") window.API_BASE = API_BASE;
 // Endpoints
 const API_URL_USUARIOS = `${API_BASE}/api/usuarios/`;
 const API_URL_CURSOS   = `${API_BASE}/api/cursos/`;
+
+const avatars = [
+	"./assets/avatarPerfil/Canguro.png",
+	"./assets/avatarPerfil/gato.png",
+	"./assets/avatarPerfil/llama.png",
+	"./assets/avatarPerfil/oso.png",
+	"./assets/avatarPerfil/pulpo.png",
+	"./assets/avatarPerfil/zorro.png",
+	"./assets/avatarPerfil/zorro2.png",
+	"./assets/avatarPerfil/zorro3.png",
+	"./assets/avatarPerfil/zorro4.png",
+];
+
+// función para elegir uno aleatorio
+function getRandomAvatar() {
+  const randomIndex = Math.floor(Math.random() * avatars.length);
+  return avatars[randomIndex];
+}
 
 // Normaliza un usuario de la API a las claves que usa el front
 function normalizeUser(u = {}) {
@@ -289,57 +231,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   // --- Avatar ---
   const profilePic   = $("#profilePic");
   const headerAvatar = $("#headerAvatar");
-  const avatarKey    = sesion.id ? `userAvatar:${sesion.id}` : "userAvatar:anon";
-  const storedAvatar = localStorage.getItem(avatarKey) || localStorage.getItem("userAvatar");
-  const avatarUrl    = sesion.avatar || storedAvatar || "./assets/avatarPerfil/default-avatar-profile.jpg";
+
+  const avatarUrl    = getRandomAvatar();
 
   if (profilePic)   profilePic.src   = avatarUrl;
   if (headerAvatar) headerAvatar.src = avatarUrl;
-
-  $$(".avatar-select").forEach(img => {
-    img.addEventListener("click", () => {
-      const url = img.src;
-      if (profilePic)   profilePic.src   = url;
-      if (headerAvatar) headerAvatar.src = url;
-      sesion.avatar = url;
-      localStorage.setItem("usuarioSesion", JSON.stringify(sesion));
-      localStorage.setItem(avatarKey, url);
-      localStorage.setItem("userAvatar", url);
-      const modalEl = document.getElementById("avatarModal");
-      if (modalEl && window.bootstrap) bootstrap.Modal.getOrCreateInstance(modalEl).hide();
-    });
-  });
-
-  // --- Descripción breve ---
-  const descSpan  = document.getElementById("userDescText");
-  const descP     = document.getElementById("userDesc");
-  const descKey   = sesion.id ? `userDesc:${sesion.id}` : "userDesc:anon";
-  let savedDesc   = sesion.descripcion || localStorage.getItem(descKey) || "";
-
-  if (savedDesc) {
-    if (descSpan) descSpan.textContent = savedDesc;
-    else if (descP && descP.firstChild) descP.firstChild.nodeValue = savedDesc + " ";
-  }
-
-  $("#saveDescBtn")?.addEventListener("click", () => {
-    const val = ($("#userDescInput")?.value || "").trim();
-    if (val.length > 250) {
-      return window.Swal
-        ? Swal.fire('Muy largo', 'Máximo 250 caracteres', 'warning')
-        : alert('Máximo 250 caracteres');
-    }
-
-    if (descSpan) descSpan.textContent = val;
-    else if (descP && descP.firstChild) descP.firstChild.nodeValue = val + " ";
-
-    localStorage.setItem(descKey, val);
-    sesion.descripcion = val;
-
-    if (window.Swal) Swal.fire('Listo', 'Descripción guardada', 'success');
-    const modalEl = document.getElementById("editDescModal");
-    if (modalEl && window.bootstrap) bootstrap.Modal.getOrCreateInstance(modalEl).hide();
-  });
-
+  
   // --- Guardar NOMBRE ---
   const nameInput = $("#userNameInput");
   if (nameInput) nameInput.value = sesion.nombre || "";
