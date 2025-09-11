@@ -4,12 +4,6 @@ const API_URL = "/api/cursos/";
 
 document.addEventListener("DOMContentLoaded", () => {
   console.log("[FORM] Formulario cargado");
-  const token = localStorage.getItem('accessToken');
-      if (!token) {
-          // Redirigir al login si no está autenticado
-          window.location.href = './iniciarSesion.html';
-          return;
-      }
   
   // --- Referencias mínimas necesarias ---
   const form = document.getElementById("product-form");
@@ -122,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log("[FORM] Valores básicos:", { base, kitChecked, kit });
 
       // Validación precio kit
-      if (kitChecked && (isNaN(kit) || kit <= base)) {
+      if (kitChecked && (isNaN(kit) || kit <= 0)) {
         console.log("[FORM] Error en validación de precio kit");
         if (coursePriceWithKit) {
           coursePriceWithKit.classList.add("is-invalid");
@@ -136,33 +130,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Validación de imagen principal
       if (!mainImage?.files[0]) {
-        console.log("[FORM] Falta imagen principal");
+        //console.log("[FORM] Falta imagen principal");
         showError("Debes seleccionar una imagen principal");
         return;
       }
 
       // Validación general del formulario
       if (!form.checkValidity()) {
-        console.log("[FORM] Formulario inválido");
+        //console.log("[FORM] Formulario inválido");
         form.classList.add("was-validated");
         return;
       }
 
-      console.log("[FORM] Todas las validaciones pasaron");
+      //console.log("[FORM] Todas las validaciones pasaron");
 
       // Mostrar indicador de carga
       showLoading("Guardando curso...");
 
       // Subir imagen principal a Cloudinary
-      console.log("[FORM] Subiendo imagen principal...");
+      //console.log("[FORM] Subiendo imagen principal...");
       let mainImageUrl = null;
       if (mainImage.files[0]) {
         mainImageUrl = await sendImage(mainImage.files[0]);
-        console.log("[FORM] Imagen principal subida:", mainImageUrl);
+        //console.log("[FORM] Imagen principal subida:", mainImageUrl);
       }
 
       // Subir imágenes adicionales
-      console.log("[FORM] Subiendo imágenes adicionales...");
+      //console.log("[FORM] Subiendo imágenes adicionales...");
       let additionalImageUrls = [];
       if (additionalImages?.files?.length > 0) {
         const files = Array.from(additionalImages.files).slice(0, 3);
@@ -171,7 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
           if (url) additionalImageUrls.push(url);
         }
       }
-      console.log("[FORM] Imágenes adicionales subidas:", additionalImageUrls);
+      //console.log("[FORM] Imágenes adicionales subidas:", additionalImageUrls);
 
       // Duración total
       const duracionTotal = Number(courseDurationEl?.value || 0);
@@ -183,57 +177,65 @@ document.addEventListener("DOMContentLoaded", () => {
         ?.filter(Boolean)
         ?.join(", ") || "";
 
-      // Construir payload
-      const payload = {
-        nombreCurso: courseNameEl.value,
-        descripcionCorta: shortDescription.value,
-        descripcionDetallada: fullDescriptionEl.value,
-        categoria: courseCategoryEl?.value || "",
-        nivelDificultad: difficultyEl?.value || "Principiante",
-        duracionTotal: duracionTotal,
-        idioma: "ES",
-        precio: base,
-        valoracionInicial: parseInt(courseRatingEl?.value || "0", 10),
-        imagenPrincipal: mainImageUrl,
-        materiales: materialesStr,
-        galeriaAdicional: (additionalImageUrls[0] || null),
-        incluyeKit: kitChecked ? 1 : 0,
-        descripcionKit: kitChecked ? (kitDescription?.value || null) : null,
-        estado: 1,
-        precioKit: kitChecked ? kit : null
-      };
+		// Construir payload corregido
+		const payload = {
+		  nombreCurso: courseNameEl.value,
+		  descripcionCorta: shortDescription.value,
+		  descripcionDetallada: fullDescriptionEl.value,
+		  categoria: courseCategoryEl?.value || "",
+		  nivelDificultad: difficultyEl?.value || "Principiante",
+		  duracionTotal: duracionTotal,
+		  idioma: "ES",
+		  precio: base,
+		  valoracionInicial: parseInt(courseRatingEl?.value || "0", 10),
+		  imagenPrincipal: mainImageUrl,
+		  materiales: materialesStr,
+		  galeriaAdicional: additionalImageUrls[0] || null,
+		  incluyeKit: kitChecked ? 1 : 0,  // Convertir a número
+		  descripcionKit: kitChecked ? (kitDescription?.value || null) : false,
+		  estado: 1,
+		  precioKit: kitChecked ? kit : 0  // Solo enviar si incluye kit
+		};
 
-      console.log("[FORM] Payload construido:", payload);
+
+		// Si incluyeKit es 0, asegurar que precioKit sea null
+		if (payload.incluyeKit === 0) {
+		  payload.precioKit = 0;
+		  payload.descripcionKit = "";
+		}
 
       // Validar que tenemos los datos mínimos
       if (!payload.nombreCurso || !payload.descripcionCorta || !payload.imagenPrincipal) {
-        console.error("[FORM] Datos incompletos:", payload);
+        //console.error("[FORM] Datos incompletos:", payload);
         hideLoading();
         showError("Faltan datos obligatorios");
         return;
       }
 
       // Realizar POST
-      console.log("[FORM] Enviando POST a:", API_URL);
+      //console.log("[FORM] Enviando POST a:", API_URL);
+	  const tokenPost = localStorage.getItem('accessToken');
+	  
       const resp = await fetch(API_URL, {
         method: "POST",
         headers: { 
-          "Content-Type": "application/json",
-          "Accept": "application/json"
+          'Content-Type': "application/json",
+		  'Authorization': `Bearer: ${tokenPost}`
+		  
         },
         body: JSON.stringify(payload)
       });
 
-      console.log("[FORM] Respuesta recibida:", resp.status, resp.ok);
+      //console.log("[FORM] Respuesta recibida:", resp.status, resp.ok);
 
       if (!resp.ok) {
         const errorText = await resp.text();
-        console.error("[FORM] Error del servidor:", errorText);
+        //console.error("[FORM] Error del servidor:", errorText);
         throw new Error(`Error ${resp.status}: ${errorText}`);
       }
 
       const creado = await resp.json();
-      console.log("[FORM] Curso creado:", creado);
+      //console.log("[FORM] Curso creado:", creado);
 
       hideLoading();
       showSuccess("¡Curso guardado correctamente!");
@@ -245,7 +247,7 @@ document.addEventListener("DOMContentLoaded", () => {
       form.classList.remove("was-validated");
 
     } catch (error) {
-      console.error("[FORM] Error completo:", error);
+      //console.error("[FORM] Error completo:", error);
       hideLoading();
       showError(error.message || "No se pudo guardar el curso");
     }
@@ -287,7 +289,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Función para subir imágenes a Cloudinary
 async function sendImage(file) {
-  console.log("[CLOUDINARY] Subiendo imagen:", file.name);
+  //console.log("[CLOUDINARY] Subiendo imagen:", file.name);
   
   const formData = new FormData();
   const cloudName = "dwkykeqgz";
@@ -307,13 +309,10 @@ async function sendImage(file) {
     }
     
     const data = await response.json();
-    console.log("[CLOUDINARY] Imagen subida exitosamente:", data.secure_url);
+    //console.log("[CLOUDINARY] Imagen subida exitosamente:", data.secure_url);
     return data.secure_url;
   } catch (error) {
     console.error("[CLOUDINARY] Error al cargar imagen:", error);
     return null;
   }
 }
-
-
-
