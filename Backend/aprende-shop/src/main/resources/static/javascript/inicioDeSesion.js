@@ -7,14 +7,12 @@ btnIngresar.addEventListener("click", async function validarUsuario(e) {
     const iptEmail = document.getElementById("useremail").value.trim();
     const iptPassword = document.getElementById("userpassword").value.trim();
 
-    // Validar campos vacíos
     if (iptEmail === "" || iptPassword === "") {
         showError("Por favor, completa todos los campos.");
         return;
     }
 
     try {
-        // Hacer petición a Spring Boot
         const response = await fetch('http://localhost:8080/api/login', {
             method: 'POST',
             headers: {
@@ -31,12 +29,38 @@ btnIngresar.addEventListener("click", async function validarUsuario(e) {
             
             // Guardar token en localStorage
             localStorage.setItem('accessToken', data.accessToken);
-            localStorage.setItem('usuarioInicio', iptEmail);
             
-            // Redirigir al index
-            window.location.href = "./index.html";
+            // Obtener información completa del usuario
+            try {
+                const userResponse = await fetch(`http://localhost:8080/api/usuarios/email/${iptEmail}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer: ${data.accessToken}`
+                    }
+                });
+                
+                if (userResponse.ok) {
+                    const userData = await userResponse.json();
+                    // CORREGIDO: Guardar con el nombre correcto que espera perfil.js
+                    localStorage.setItem('usuarioSesion', JSON.stringify(userData));
+                    window.location.href = "./index.html";
+                } else {
+                    // Fallback si no se puede obtener info completa
+                    localStorage.setItem('usuarioSesion', JSON.stringify({
+                        email: iptEmail,
+                        nombre: iptEmail.split('@')[0]
+                    }));
+                    window.location.href = "./index.html";
+                }
+            } catch (userError) {
+                console.error('Error obteniendo usuario:', userError);
+                localStorage.setItem('usuarioSesion', JSON.stringify({
+                    email: iptEmail,
+                    nombre: iptEmail.split('@')[0]
+                }));
+                window.location.href = "./index.html";
+            }
         } else {
-            const errorText = await response.text();
             showError("Usuario o contraseña incorrectos.");
         }
     } catch (error) {
@@ -44,11 +68,6 @@ btnIngresar.addEventListener("click", async function validarUsuario(e) {
         showError("Error de conexión con el servidor.");
     }
 });
-
-function showError(message) {
-    errorMsg.textContent = message;
-    errorMsg.classList.remove("d-none");
-}
 
 
 

@@ -155,12 +155,12 @@ function isUserLoggedIn() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-	console.log('Verificando autenticación...');
-	    console.log('Token:', localStorage.getItem('accessToken'));
-	    console.log('Usuario:', localStorage.getItem('usuarioInicio'));
+	//console.log('Verificando autenticación...');
+	 //   console.log('Token:', localStorage.getItem('accessToken'));
+	 //   console.log('Usuario:', localStorage.getItem('usuarioInicio'));
 	    
 	    if (!isUserAuthenticated()) {
-	        console.log('Usuario NO autenticado, mostrando navbar público');
+	   //     console.log('Usuario NO autenticado, mostrando navbar público');
 	        document.body.insertAdjacentHTML("afterbegin", navBarNotLoggedIn);
 	        document.body.insertAdjacentHTML("beforeend", footerAprendeShop);
 	        
@@ -169,7 +169,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	        const currentPage = window.location.pathname.split('/').pop();
 	        
 	        if (protectedPages.includes(currentPage)) {
-	            console.log('Redirigiendo a login desde página protegida');
+	      //      console.log('Redirigiendo a login desde página protegida');
 	            window.location.href = './iniciarSesion.html';
 	        }
 	    } else {
@@ -335,4 +335,11 @@ async function apiRequest(url, options = {}) {
     }
     
     return response.json();
+}
+
+function isUserAuthenticated() {
+    const token = localStorage.getItem('accessToken');
+    // Buscar en ambas posibles claves
+    const usuarioStr = localStorage.getItem('usuarioInicio') || localStorage.getItem('usuarioSesion');
+    return token && usuarioStr && token !== 'null' && token !== 'undefined';
 }

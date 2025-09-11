@@ -1,4 +1,4 @@
-class ApiClient {
+/*class ApiClient {
     static getBaseUrl() {
         return 'http://localhost:8080/api';
     }
@@ -52,4 +52,4 @@ class ApiClient {
             throw new Error(error);
         }
     }
-}
+}*/
