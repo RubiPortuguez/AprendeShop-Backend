@@ -3,6 +3,7 @@ import java.util.List;
 
 import org.aprende_shop.aprende_shop.model.Usuario;
 import org.aprende_shop.aprende_shop.service.UsuarioService;
+import org.aprende_shop.aprende_shop.dto.ChangePassword;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,8 +28,8 @@ public class UsuarioController {
 	
 	//GET
 	@GetMapping (path="{userId}")
-	public Usuario getUsuario(@PathVariable("userId") Integer id) {
-		return service.getUser(id);
+	public Usuario getUsuario(@PathVariable("userId") String email) {
+		return service.getUser(email);
 	}
 	
 	@GetMapping
@@ -52,12 +53,15 @@ public class UsuarioController {
 	//PUT 
 	@PutMapping (path="{userId}")
 	public Usuario updateUsuario(@PathVariable("userId") Integer id,
-			@RequestParam(required=false) String nombre,
-			@RequestParam(required=false) String email,
-			@RequestParam(required=false) String telefono,
-			@RequestParam(required=false) String password,
-			@RequestParam(required=false) String tipoUsuario,
-			@RequestParam(required=false) Byte estado) {
-		return service.updateUser(id, nombre, email, telefono, password, tipoUsuario, estado);
+			@RequestBody Usuario usuario) {
+		return service.updateUser(id, usuario);
 	}
+	
+	//PUT 
+	@PutMapping (path="changePwd/{userId}")
+	public Usuario updatePassword(@PathVariable("userId") Integer id,
+			@RequestBody ChangePassword changePassword) {
+		return service.updatePassword(id,changePassword);
+	}
+	
 }

@@ -1,9 +1,14 @@
-// Detecta si estamos en perfil.html para usar anchors locales
 const isPerfil = /(^|\/)perfil\.html(\?|#|$)/.test(location.pathname);
 
 const hrefPerfil = isPerfil ? '#perfil' : './perfil.html#perfil';
 const hrefConfig = isPerfil ? '#configuracion' : './perfil.html#configuracion';
 const hrefWishlist = isPerfil ? '#wishlist' : './perfil.html#wishlist';
+
+function isUserAuthenticated() {
+    const token = localStorage.getItem('accessToken');
+    const usuario = localStorage.getItem('usuarioInicio');
+    return token && usuario && token !== 'null' && token !== 'undefined';
+}
 
 const navBarLoggedIn = `
   <nav id="perfilMenu" class="navbar navbar-expand-lg sticky-top">
@@ -40,7 +45,7 @@ const navBarLoggedIn = `
                             </a>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href=" href="${hrefPerfil}" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle" href="${hrefPerfil}" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-person-circle d-none d-lg-inline"></i>
                             <span class="d-lg-none">Mi perfil</span>
                             </a>
@@ -48,7 +53,7 @@ const navBarLoggedIn = `
                             <li><a class="dropdown-item desktop-menu d-none d-md-block" href="${hrefPerfil}">Mi perfil</a></li>
                             <li><a class="dropdown-item" href="${hrefConfig}">Configuración</a></li>
                             <li><a class="dropdown-item" href="${hrefWishlist}">Lista de deseos</a></li>
-                            <li><a class="dropdown-item" id="cerrar-sesion" href="./registro.html">Cerrar sesión</a></li>
+                            <li><a class="dropdown-item" id="cerrar-sesion" href="#">Cerrar sesión</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -142,140 +147,199 @@ const footerAprendeShop =
     </div>
     </footer>`;
 
-	// navbarAndFooter.js
+// Función para verificar si el usuario está logueado
+function isUserLoggedIn() {
+    const token = localStorage.getItem('accessToken');
+    const usuario = localStorage.getItem('usuarioInicio');
+    return token && usuario;
+}
 
-	document.addEventListener("DOMContentLoaded", () => {
-	  // --- sesión actual desde login (nuevo flujo) ---
-	  const sesionStr = localStorage.getItem("usuarioSesion");
-	  const sesion = sesionStr ? JSON.parse(sesionStr) : null;
-
-	  // --- helpers ---
-	  const isPerfil = /(^|\/)perfil\.html(\?|#|$)/.test(location.pathname);
-
-	  function actualizarIconoCarrito() {
-	    const iconoPA = document.getElementById("iconoPA");
-	    if (!iconoPA) return;
-	    const productos = JSON.parse(localStorage.getItem("productos-cesta") || "[]");
-	    const n = productos.length;
-	    if (n > 0) {
-	      iconoPA.classList.remove("visually-hidden");
-	      iconoPA.textContent = String(n);
+document.addEventListener("DOMContentLoaded", function () {
+	//console.log('Verificando autenticación...');
+	 //   console.log('Token:', localStorage.getItem('accessToken'));
+	 //   console.log('Usuario:', localStorage.getItem('usuarioInicio'));
+	    
+	    if (!isUserAuthenticated()) {
+	   //     console.log('Usuario NO autenticado, mostrando navbar público');
+	        document.body.insertAdjacentHTML("afterbegin", navBarNotLoggedIn);
+	        document.body.insertAdjacentHTML("beforeend", footerAprendeShop);
+	        
+	        // Redirigir si está en página protegida
+	        const protectedPages = ['perfil.html', 'carrito.html', 'configuracion.html'];
+	        const currentPage = window.location.pathname.split('/').pop();
+	        
+	        if (protectedPages.includes(currentPage)) {
+	      //      console.log('Redirigiendo a login desde página protegida');
+	            window.location.href = './iniciarSesion.html';
+	        }
 	    } else {
-	      iconoPA.classList.add("visually-hidden");
-	      iconoPA.textContent = "";
-	    }
-	  }
+	        console.log('Usuario autenticado, mostrando navbar privado');
+	        document.body.insertAdjacentHTML("afterbegin", navBarLoggedIn);
+	        document.body.insertAdjacentHTML("beforeend", footerAprendeShop);
+        
+        // Cargar elementos del carrito si existe
+        let iconoPA;
+        const productosCesta = JSON.parse(localStorage.getItem("productos-cesta") || "[]");
+        
+        function cargarElementos() {
+            iconoPA = document.getElementById("iconoPA");
+            actualizariconoPA();
+        }
 
-	  // --- inyecta navbar y footer según esté logueado o no ---
-	  // (navBarLoggedIn, navBarNotLoggedIn y footerAprendeShop deben existir como strings HTML)
-	  if (!sesion) {
-	    document.body.insertAdjacentHTML("afterbegin", navBarNotLoggedIn);
-	  } else {
-	    document.body.insertAdjacentHTML("afterbegin", navBarLoggedIn);
-	  }
-	  document.body.insertAdjacentHTML("beforeend", footerAprendeShop);
+        function actualizariconoPA() {
+            const productosCesta = JSON.parse(localStorage.getItem("productos-cesta") || "[]");
+            if (productosCesta.length > 0) {
+                iconoPA.classList.remove("visually-hidden");
+                iconoPA.textContent = productosCesta.length;
+            } else {
+                iconoPA.classList.add("visually-hidden");
+            }
+        }
+        
+        // Inicializar elementos del carrito
+        cargarElementos();
+    }
 
-	  // Si el navbar logueado tiene el nombre/rol, pónselos
-	  if (sesion) {
-	    const nombreEl = document.getElementById("navUserName");
-	    if (nombreEl) nombreEl.textContent = sesion.nombre || sesion.email || "Mi perfil";
-	    const avatarEl = document.getElementById("navUserAvatar");
-	    const avatarUrl = sesion.avatar || localStorage.getItem("userAvatar") || "./assets/avatars/default.png";
-	    if (avatarEl) avatarEl.src = avatarUrl;
-	  }
+    // Activa ScrollSpy solo en perfil.html
+    if (isPerfil && window.bootstrap) {
+        // Atributos útiles para ScrollSpy
+        document.body.setAttribute('data-bs-spy', 'scroll');
+        document.body.setAttribute('data-bs-target', '#perfilMenu');
+        document.body.setAttribute('data-bs-offset', '80');
+        document.body.setAttribute('tabindex', '0');
 
-	  // Actualiza el iconito del carrito (si existe)
-	  actualizarIconoCarrito();
-	  // si cambia en otra pestaña
-	  window.addEventListener("storage", (ev) => {
-	    if (ev.key === "productos-cesta") actualizarIconoCarrito();
-	  });
+        // Inicialización programática (opcional pero recomendable al inyectar HTML)
+        new bootstrap.ScrollSpy(document.body, {
+            target: '#perfilMenu',
+            offset: 80
+        });
+    }
+});
 
-	  // --- ScrollSpy solo en perfil ---
-	  if (isPerfil && window.bootstrap) {
-	    document.body.setAttribute("data-bs-spy", "scroll");
-	    document.body.setAttribute("data-bs-target", "#perfilMenu");
-	    document.body.setAttribute("data-bs-offset", "80");
-	    document.body.setAttribute("tabindex", "0");
+document.body.addEventListener('click', function (event) {
+    if (event.target.closest('.copiarCorreoFooter')) { //Detecta el elemento donde se origino el clic
+        event.preventDefault();
+        const elemento = event.target.closest('.copiarCorreoFooter');
+        const correo = elemento.dataset.correo; //Obtiene el valor de data-correo
 
-	    new bootstrap.ScrollSpy(document.body, {
-	      target: "#perfilMenu",
-	      offset: 80
-	    });
-	  }
+        navigator.clipboard.writeText(correo).then(() => { //Metodo que copia el correo al portapapeles a traves de la API Clipboard (del navegador)
+            Swal.fire({
+                title: `Correo ${correo} copiado al portapapeles`,
+                icon: "success",
+                draggable: true,
+                // Personalización de botones
+                buttonsStyling: true, // Mantener estilos base de SweetAlert2
+                confirmButtonText: "Aceptar",
+                confirmButtonColor: "#985EFF",
+                cancelButtonColor: "#d33",
+                // Personalización de fuentes
+                customClass: {
+                    title: "mi-titulo", // Clase para el título
+                    content: "mi-contenido", // Clase para el contenido
+                    confirmButton: "mi-boton", // Clase para el botón confirmar
+                },
+            });
+        });
+    }
+});
 
-	  // --- marcar link activo en navbar ---
-	  const current = (location.pathname.split("/").pop() || "index.html").toLowerCase();
+document.addEventListener('DOMContentLoaded', () => {
+    const current = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
 
-	  document.querySelectorAll(".navbar a.nav-link[href]").forEach(a => {
-	    const page = a.getAttribute("href").split("/").pop().toLowerCase();
-	    if (page && page === current) {
-	      a.classList.add("active");
-	      a.setAttribute("aria-current", "page");
-	    } else {
-	      a.classList.remove("active");
-	      a.removeAttribute("aria-current");
-	    }
-	  });
+    // Marca los links del navbar principal
+    document.querySelectorAll('.navbar a.nav-link[href]').forEach(a => {
+        const page = a.getAttribute('href').split('/').pop().toLowerCase();
+        if (page && page === current) {
+            a.classList.add('active');
+            a.setAttribute('aria-current', 'page');
+        } else {
+            a.classList.remove('active');
+            a.removeAttribute('aria-current');
+        }
+    });
 
-	  document.querySelectorAll(".navbar .dropdown-menu a.dropdown-item[href]").forEach(a => {
-	    const page = a.getAttribute("href").split("/").pop().toLowerCase();
-	    if (page && page === current) a.classList.add("active");
-	    else a.classList.remove("active");
-	  });
-	});
+    // (Opcional) Marca dentro del dropdown si estás en perfil/config/etc.
+    document.querySelectorAll('.navbar .dropdown-menu a.dropdown-item[href]').forEach(a => {
+        const page = a.getAttribute('href').split('/').pop().toLowerCase();
+        if (page && page === current) a.classList.add('active');
+        else a.classList.remove('active');
+    });
+});
 
-	// --- copiar correo del footer (delegación de eventos) ---
-	document.body.addEventListener("click", (event) => {
-	  const btnCopy = event.target.closest(".copiarCorreoFooter");
-	  if (!btnCopy) return;
+document.body.addEventListener("click", function (event) {
+    const cerrar = event.target.closest('#cerrar-sesion');
+    if (cerrar) {
+        event.preventDefault();
+        Swal.fire({
+            title: '¿Estás seguro que deseas cerrar sesión?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, cerrar sesión',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#985EFF',
+            cancelButtonColor: '#d33',
+            customClass: {
+                title: "mi-titulo",
+                content: "mi-contenido",
+                confirmButton: "mi-boton",
+            },
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Limpiar todos los datos de sesión
+                localStorage.removeItem('usuarioInicio');
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('productos-cesta'); // Opcional: limpiar carrito
+                
+                // Redirigir al inicio
+                window.location.href = './index.html';
+            }
+        });
+    }
+});
 
-	  event.preventDefault();
-	  const correo = btnCopy.dataset.correo || "";
-	  navigator.clipboard.writeText(correo).then(() => {
-	    Swal.fire({
-	      title: `Correo ${correo} copiado al portapapeles`,
-	      icon: "success",
-	      buttonsStyling: true,
-	      confirmButtonText: "Aceptar",
-	      confirmButtonColor: "#985EFF",
-	      customClass: {
-	        title: "mi-titulo",
-	        content: "mi-contenido",
-	        confirmButton: "mi-boton",
-	      },
-	    });
-	  });
-	});
+// Función para verificar autenticación en páginas protegidas
+function requireAuth() {
+    if (!isUserLoggedIn()) {
+        window.location.href = './iniciarSesion.html';
+        return false;
+    }
+    return true;
+}
 
-	// --- cerrar sesión (delegación de eventos) ---
-	document.body.addEventListener("click", (event) => {
-	  const cerrar = event.target.closest("#cerrar-sesion");
-	  if (!cerrar) return;
+// Función para hacer peticiones autenticadas
+async function apiRequest(url, options = {}) {
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+        throw new Error('No authentication token found');
+    }
 
-	  event.preventDefault();
-	  Swal.fire({
-	    title: "¿Estás seguro que deseas cerrar sesión?",
-	    icon: "warning",
-	    showCancelButton: true,
-	    confirmButtonText: "Sí, cerrar sesión",
-	    cancelButtonText: "Cancelar",
-	    confirmButtonColor: "#985EFF",
-	    cancelButtonColor: "#d33",
-	    customClass: {
-	      title: "mi-titulo",
-	      content: "mi-contenido",
-	      confirmButton: "mi-boton",
-	    },
-	  }).then((result) => {
-	    if (result.isConfirmed) {
-	      // nuevo flujo
-	      localStorage.removeItem("usuarioSesion");
-	      // limpieza vieja por compatibilidad
-	      localStorage.removeItem("usuarioInicio");
-	      window.location.href = "./index.html";
-	    }
-	  });
-	});
+    const defaultOptions = {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer: ${token}`
+        }
+    };
 
+    const mergedOptions = { ...defaultOptions, ...options };
+    
+    const response = await fetch(`http://localhost:8080/api${url}`, mergedOptions);
+    
+    if (!response.ok) {
+        if (response.status === 401) {
+            // Token inválido o expirado
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('usuarioInicio');
+            window.location.href = './iniciarSesion.html';
+        }
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return response.json();
+}
 
+function isUserAuthenticated() {
+    const token = localStorage.getItem('accessToken');
+    // Buscar en ambas posibles claves
+    const usuarioStr = localStorage.getItem('usuarioInicio') || localStorage.getItem('usuarioSesion');
+    return token && usuarioStr && token !== 'null' && token !== 'undefined';
+}
