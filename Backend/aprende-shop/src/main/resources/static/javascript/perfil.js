@@ -313,6 +313,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   // --- Cerrar sesión ---
   $("#btnLogout")?.addEventListener("click", () => {
     localStorage.removeItem("usuarioSesion");
+	localStorage.removeItem("productos-cesta");
+	localStorage.removeItem("wishlist");
     window.location.href = "./iniciarSesion.html";
   });
 });

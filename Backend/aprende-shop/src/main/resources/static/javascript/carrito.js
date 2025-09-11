@@ -81,15 +81,16 @@ function eliminarProducto(index) {
 
 // --- Burbuja del carrito en navbar ---
 function actualizariconoPA() {
-  if (!iconoPA) return; // esta vista puede no tener el badge
-  const productosCesta = getCart();
-  if (productosCesta.length > 0) {
-    iconoPA.classList.remove("visually-hidden");
-    iconoPA.textContent = productosCesta.length;
-  } else {
-    iconoPA.classList.add("visually-hidden");
-  }
-}
+ const iconoCarrito     = document.getElementById("iconoPA");
+ const cart = JSON.parse(localStorage.getItem("productos-cesta") || "[]");
+ if (cart.length > 0) {
+    iconoCarrito.classList.remove("visually-hidden");
+    iconoCarrito.textContent = cart.length;
+ } else {
+    iconoCarrito.classList.remove("visually-hidden");
+    iconoCarrito.textContent = "";
+ }
+ }
 
 // --- Totales ---
 function preciosCarrito() {

@@ -16,7 +16,7 @@ public class ResenaService {
 	public ResenaService(ResenaRepository reseRepository) {
 		this.reseRepository = reseRepository;
 	}
-
+	
 	public List<Resena> getResena() {
         return reseRepository.findAll();
     } //Todos los cursos
@@ -29,7 +29,7 @@ public class ResenaService {
 	} // Un solo curso
 	
 	 public List<Resena> getByCurso(Integer idCurso) {
-	        return reseRepository.findByFkIdCurso(idCurso);
+		 return reseRepository.findByFkIdCursoWithUsuario(idCurso);
 	    }
 	
 	//DELETE

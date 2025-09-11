@@ -109,19 +109,6 @@ const REVIEWS_URL = "/api/review/curso/";
   async function fetchUserName(userId) {
     if (!userId) return null;
     if (userCache.has(userId)) return userCache.get(userId);
-
-    try {
-      const r = await fetch(`/api/usuarios/${userId}`);
-      if (!r.ok) throw new Error("no ok");
-      const u = await r.json();
-      const name = u.nombre || u.name || `Usuario #${userId}`;
-      userCache.set(userId, name);
-      return name;
-    } catch {
-      const fallback = `Usuario #${userId}`;
-      userCache.set(userId, fallback);
-      return fallback;
-    }
   }
 
 
@@ -246,7 +233,7 @@ const REVIEWS_URL = "/api/review/curso/";
       let tarjetasHTML = '<div class="d-flex justify-content-center">';
       grupo.forEach((c) => {
         const uid    = c.fkIdUsuario ?? c.fk_idUsuario;
-        const nombre = c.nombreUsuario ?? (`Usuario #${uid}`);
+        const nombre = c.usuario.nombre ?? (`Usuario #${uid}`);
         tarjetasHTML += `
           <div class="card mx-2" style="min-width: 250px; max-width: 300px;">
             <div class="card-body">
@@ -272,78 +259,77 @@ const REVIEWS_URL = "/api/review/curso/";
 
   // ---------- Carrito ----------
   // ---- Estado / refs globales ---
-  let iconoPA = null;
-  let productosCesta = [];
-  hasKit = false;               // <-- este es el que usa agregarCarrito()
-  let alertaToast = null;
+    let iconoPA = null;
+    let productosCesta = [];
+    hasKit = false;               // <-- este es el que usa agregarCarrito()
+    let alertaToast = null;
 
-  // helper: ejecuta ahora o cuando el DOM esté listo
-  function ready(fn){
-    if (document.readyState !== "loading") fn();
-    else document.addEventListener("DOMContentLoaded", fn);
-  }
-
-  // Carga refs del DOM y engancha eventos
-  function cargarElementos() {
-    iconoPA     = document.getElementById("iconoPA");
-    alertaToast = document.getElementById("liveToast");
-
-    // ¡Re-consulta el botón aquí! (por si fue null al cargar el archivo)
-    const btnComprar = document.querySelector(".btnComprar");
-    if (btnComprar) {
-      btnComprar.addEventListener("click", agregarCarrito);
+    // helper: ejecuta ahora o cuando el DOM esté listo
+    function ready(fn){
+      if (document.readyState !== "loading") fn();
+      else document.addEventListener("DOMContentLoaded", fn);
     }
 
-    actualizariconoPA();
-  }
+    // Carga refs del DOM y engancha eventos
+    function cargarElementos() {
+      iconoPA     = document.getElementById("iconoPA");
+      alertaToast = document.getElementById("liveToast");
 
-  // Llama cargarElementos incluso si DOMContentLoaded ya pasó
-  ready(cargarElementos);
+      // ¡Re-consulta el botón aquí! (por si fue null al cargar el archivo)
+      const btnComprar = document.querySelector(".btnComprar");
+      if (btnComprar) {
+        btnComprar.addEventListener("click", agregarCarrito);
+      }
 
-  // Agrega al carrito
-  function agregarCarrito(e) {
-    e?.preventDefault();
-    if (!window.producto) return;
-
-    // Lee el switch en el momento del click
-    const check = document.getElementById("checkNativeSwitch");
-    const precioFinal = (hasKit && check && check.checked && Number(producto.precioKit))
-      ? Number(producto.precioKit)
-      : Number(producto.precio);
-
-    // Vuelve a leer carrito por seguridad (multi-pestaña)
-    const cart = JSON.parse(localStorage.getItem("productos-cesta") || "[]");
-    cart.push({
-      id:     producto.idCurso,
-      imagen: producto.imagenPrincipal,
-      nombre: producto.nombreCurso,
-      precio: precioFinal
-    });
-    localStorage.setItem("productos-cesta", JSON.stringify(cart));
-    productosCesta = cart;
-
-    // Feedback: toast o SweetAlert
-    if (window.bootstrap?.Toast && alertaToast) {
-      bootstrap.Toast.getOrCreateInstance(alertaToast).show();
-    } else if (window.Swal) {
-      Swal.fire({ icon: "success", title: "Agregado al carrito" });
+     // actualizariconoPA();
     }
 
-    actualizariconoPA();
-  }
+    // Llama cargarElementos incluso si DOMContentLoaded ya pasó
+    ready(cargarElementos);
 
-  // Badge del carrito
-  function actualizariconoPA() {
-    const cart = JSON.parse(localStorage.getItem("productos-cesta") || "[]");
-    if (!iconoPA) return;
-    if (cart.length > 0) {
-      iconoPA.classList.remove("visually-hidden");
-      iconoPA.textContent = cart.length;
-    } else {
-      iconoPA.classList.add("visually-hidden");
-      iconoPA.textContent = "";
+    // Agrega al carrito
+    function agregarCarrito(e) {
+      e.preventDefault();
+     // if (!window.producto) return;
+
+      // Lee el switch en el momento del click
+      const check = document.getElementById("checkNativeSwitch");
+      const precioFinal = (hasKit && check && check.checked && Number(producto.precioKit))
+        ? Number(producto.precioKit)
+        : Number(producto.precio);
+
+      // Vuelve a leer carrito por seguridad (multi-pestaña)
+      const cart = JSON.parse(localStorage.getItem("productos-cesta") || "[]");
+      cart.push({
+        id:     producto.idCurso,
+        imagen: producto.imagenPrincipal,
+        nombre: producto.nombreCurso,
+        precio: precioFinal
+      });
+      localStorage.setItem("productos-cesta", JSON.stringify(cart));
+      productosCesta = cart;
+
+      // Feedback: toast o SweetAlert
+      if (window.bootstrap?.Toast && alertaToast) {
+        bootstrap.Toast.getOrCreateInstance(alertaToast).show();
+      } else if (window.Swal) {
+        Swal.fire({ icon: "success", title: "Agregado al carrito" });
+      }
+  	actualizariconoPA();
     }
-  }
+
+    // Badge del carrito
+    function actualizariconoPA() {
+  	const iconoCarrito     = document.getElementById("iconoPA");
+      const cart = JSON.parse(localStorage.getItem("productos-cesta") || "[]");
+      if (cart.length > 0) {
+        iconoCarrito.classList.remove("visually-hidden");
+        iconoCarrito.textContent = cart.length;
+      } else {
+        iconoCarrito.classList.remove("visually-hidden");
+        iconoCarrito.textContent = "";
+      }
+    }
 
   // ---------- Wishlist ----------
   let wishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");

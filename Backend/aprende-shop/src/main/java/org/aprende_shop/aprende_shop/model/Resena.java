@@ -25,6 +25,7 @@ public class Resena {
 	private Integer calificacion;
 	@Column (name = "comentario")
 	private String comentarios;
+	@ManyToOne @JoinColumn(name = "fk_idusuario", insertable = false, updatable = false) private Usuario usuario;
 	
 
 	//Constructor
@@ -74,6 +75,9 @@ public class Resena {
 
 	public void setFkIdUsuario(Integer fkIdUsuario) {
 		this.fkIdUsuario = fkIdUsuario;
+	}
+	public Usuario getUsuario() { 
+		return usuario; 
 	}
 
 	//toString
