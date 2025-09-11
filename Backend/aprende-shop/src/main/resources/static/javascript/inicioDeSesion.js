@@ -32,7 +32,7 @@ btnIngresar.addEventListener("click", async function validarUsuario(e) {
             
             // Obtener información completa del usuario
             try {
-                const userResponse = await fetch(`http://localhost:8080/api/usuarios/email/${iptEmail}`, {
+                const userResponse = await fetch(`http://localhost:8080/api/usuarios/${iptEmail}`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer: ${data.accessToken}`
@@ -42,30 +42,19 @@ btnIngresar.addEventListener("click", async function validarUsuario(e) {
                 if (userResponse.ok) {
                     const userData = await userResponse.json();
                     // CORREGIDO: Guardar con el nombre correcto que espera perfil.js
-                    localStorage.setItem('usuarioSesion', JSON.stringify(userData));
+                    localStorage.setItem('usuarioSesion', userData.email);
                     window.location.href = "./index.html";
                 } else {
-                    // Fallback si no se puede obtener info completa
-                    localStorage.setItem('usuarioSesion', JSON.stringify({
-                        email: iptEmail,
-                        nombre: iptEmail.split('@')[0]
-                    }));
                     window.location.href = "./index.html";
                 }
             } catch (userError) {
-                console.error('Error obteniendo usuario:', userError);
-                localStorage.setItem('usuarioSesion', JSON.stringify({
-                    email: iptEmail,
-                    nombre: iptEmail.split('@')[0]
-                }));
-                window.location.href = "./index.html";
+                Swal.fire({icon:"error", title:"Usuario o contraseña incorrectos", text:userError.message});
             }
         } else {
-            showError("Usuario o contraseña incorrectos.");
+            Swal.fire({icon:"error", title:"Usuario o contraseña incorrectos"});
         }
     } catch (error) {
-        console.error('Error:', error);
-        showError("Error de conexión con el servidor.");
+        Swal.fire({icon:"error", title:"Error de conexión", text:error.message});
     }
 });
 

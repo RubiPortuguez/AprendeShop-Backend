@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.aprende_shop.aprende_shop.model.Usuario;
 import org.aprende_shop.aprende_shop.repository.UsuarioRepository;
+import org.aprende_shop.aprende_shop.dto.ChangePassword;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,8 +23,8 @@ public class UsuarioService {
 		this.repository = repository;
 	}
 	
-	public Usuario getUser(Integer id) {
-		return repository.findById(id).orElseThrow(()-> new IllegalArgumentException("El producto con el id [ " + id +" ] no existe"));
+	public Usuario getUser(String email) {
+		return repository.findByEmail(email).orElseThrow(()-> new IllegalArgumentException("El usuario con el email [ " + email +" ] no existe"));
 	}//getUser
 
 	public List<Usuario> getUsers() {
@@ -51,21 +52,34 @@ public class UsuarioService {
 		return usuario;
 	}//addUser
 
-	public Usuario updateUser(Integer id, String nombre, String email, String telefono, String password, String tipoUsuario, Byte estado) {
+	public Usuario updateUser(Integer id, Usuario usuario) {
 		Usuario tmpUsuario = null;
 		if (repository.existsById(id)) {
-			Usuario usuario = repository.findById(id).get();
-			if (nombre != null) usuario.setNombre(nombre);
-			if (email != null) usuario.setEmail(email);
-			if (telefono != null) usuario.setTelefono(telefono);
-			if (password != null) usuario.setPassword(encoder.encode(password));
-			if (tipoUsuario != null) usuario.setTipoUsuario(tipoUsuario);
-			if (tipoUsuario != null) usuario.setEstado(estado);
-			repository.save(usuario);
-			tmpUsuario = usuario;
+			Usuario usuarioBD = repository.findById(id).get();
+			if (usuario.getNombre() != null) usuarioBD.setNombre(usuario.getNombre());
+			if (usuario.getEmail() != null) usuarioBD.setEmail(usuario.getEmail());
+			if (usuario.getTelefono() != null) usuarioBD.setTelefono(usuario.getTelefono());
+			if (usuario.getTipoUsuario() != null) usuarioBD.setTipoUsuario(usuario.getTipoUsuario());
+			if (usuario.getEstado() != null) usuarioBD.setEstado(usuario.getEstado());
+			repository.save(usuarioBD);
+			tmpUsuario = usuarioBD;
 		}
 		return tmpUsuario;
 	}//updateUser
+	
+	public Usuario updatePassword(Integer id, ChangePassword changePassword) {
+		Usuario tmpUser = null;
+		if (repository.existsById(id)) {
+			tmpUser = repository.findById(id).get();
+			if (encoder.matches(changePassword.getPassword(), tmpUser.getPassword())) {
+				tmpUser.setPassword(encoder.encode(changePassword.getNpassword()));
+				return repository.save(tmpUser);
+			}else {
+				tmpUser = null;
+			}
+		}
+		return tmpUser;
+	}//updatePassword
 
 	public boolean validateUser(Usuario usuario) {
 		Optional<Usuario> user = repository.findByEmail(usuario.getEmail());
