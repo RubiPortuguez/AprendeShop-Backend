@@ -4,6 +4,12 @@ const API_URL = "/api/cursos/";
 
 document.addEventListener("DOMContentLoaded", () => {
   console.log("[FORM] Formulario cargado");
+  const token = localStorage.getItem('accessToken');
+      if (!token) {
+          // Redirigir al login si no está autenticado
+          window.location.href = './iniciarSesion.html';
+          return;
+      }
   
   // --- Referencias mínimas necesarias ---
   const form = document.getElementById("product-form");

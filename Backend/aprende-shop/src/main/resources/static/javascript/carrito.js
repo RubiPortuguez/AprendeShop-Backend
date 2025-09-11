@@ -173,6 +173,12 @@ function finalizarCompra() {
 
 // --- Bootstrap ---
 document.addEventListener("DOMContentLoaded", () => {
+	const token = localStorage.getItem('accessToken');
+	    if (!token) {
+	        // Redirigir al login si no está autenticado
+	        window.location.href = './iniciarSesion.html';
+	        return;
+	    }
   mostrarCarrito();
   if (btnPagar) btnPagar.addEventListener("click", metodosPago);
 });
