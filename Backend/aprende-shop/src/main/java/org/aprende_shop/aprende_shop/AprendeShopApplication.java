@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 public class AprendeShopApplication {
 
 	public static void main(String[] args) {
+		//System.out.println("Version: 1.2");
 		SpringApplication.run(AprendeShopApplication.class, args);
 	}
 	

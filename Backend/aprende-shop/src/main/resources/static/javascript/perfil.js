@@ -3,16 +3,6 @@
 // Evita CORS si el front no corre en 8080
 
 // ----- Config base/API -----
-const API_BASE = (typeof window !== "undefined" && window.API_BASE)
-  ? window.API_BASE
-  : (location.origin.includes(":8080") ? "" : "http://localhost:8080");
-
-if (typeof window !== "undefined") window.API_BASE = API_BASE;
-
-// Endpoints
-const API_URL_USUARIOS = `${API_BASE}/api/usuarios/`;
-const API_URL_CURSOS   = `${API_BASE}/api/cursos/`;
-
 const avatars = [
 	"./assets/avatarPerfil/Canguro.png",
 	"./assets/avatarPerfil/gato.png",
@@ -171,11 +161,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
       
       // Redirigir a la página de agregar producto
-      console.log("[PERFIL] Redirigiendo a agregar producto...");
+      //console.log("[PERFIL] Redirigiendo a agregar producto...");
       window.location.href = "./formularioProducto.html";
     });
   } else {
-    console.warn("[PERFIL] No se encontró el botón agregar producto");
+    //console.warn("[PERFIL] No se encontró el botón agregar producto");
   }
 
   // --- También buscar por diferentes selectores comunes ---
@@ -342,7 +332,7 @@ const itemsContainer = document.getElementById("itemsContainer");
 // Cargar cursos de la BD
 async function loadProducts() {
   try {
-    const res = await fetch(API_URL_CURSOS, { method: "GET" });
+    const res = await fetch('/api/cursos/', { method: "GET" });
     const raw = await res.text();
     if (!res.ok) throw new Error(raw || `Error ${res.status} cargando cursos`);
     const data = JSON.parse(raw);

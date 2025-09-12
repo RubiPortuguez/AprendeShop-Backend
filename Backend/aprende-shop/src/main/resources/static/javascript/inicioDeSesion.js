@@ -54,6 +54,7 @@ btnIngresar.addEventListener("click", async function validarUsuario(e) {
             Swal.fire({icon:"error", title:"Usuario o contraseña incorrectos"});
         }
     } catch (error) {
+		console.log(error);
         Swal.fire({icon:"error", title:"Error de conexión", text:error.message});
     }
 });

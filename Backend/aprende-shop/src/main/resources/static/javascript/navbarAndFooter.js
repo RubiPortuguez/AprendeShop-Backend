@@ -173,7 +173,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	            window.location.href = './iniciarSesion.html';
 	        }
 	    } else {
-	        console.log('Usuario autenticado, mostrando navbar privado');
+	        //console.log('Usuario autenticado, mostrando navbar privado');
 	        document.body.insertAdjacentHTML("afterbegin", navBarLoggedIn);
 	        document.body.insertAdjacentHTML("beforeend", footerAprendeShop);
         

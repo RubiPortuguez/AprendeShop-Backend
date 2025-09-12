@@ -31,6 +31,7 @@ private final UsuarioService service;
 
 	@PostMapping
 	public Token loginUser(@RequestBody Usuario usuario) throws ServletException {
+		System.out.println("Entro en el login controller");
 		if (service.validateUser(usuario)) {
 			return new Token(generateToken(usuario.getEmail()));
 		}
