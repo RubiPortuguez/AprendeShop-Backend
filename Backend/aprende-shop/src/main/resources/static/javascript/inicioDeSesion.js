@@ -13,7 +13,7 @@ btnIngresar.addEventListener("click", async function validarUsuario(e) {
     }
 
     try {
-        const response = await fetch('http://localhost:8080/api/login', {
+        const response = await fetch('/api/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -32,7 +32,7 @@ btnIngresar.addEventListener("click", async function validarUsuario(e) {
             
             // Obtener información completa del usuario
             try {
-                const userResponse = await fetch(`http://localhost:8080/api/usuarios/${iptEmail}`, {
+                const userResponse = await fetch(`/api/usuarios/${iptEmail}`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer: ${data.accessToken}`

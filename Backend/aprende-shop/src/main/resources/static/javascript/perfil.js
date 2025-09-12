@@ -52,7 +52,7 @@ async function putUsuario(sesionParam) {
 	const tokenPut = localStorage.getItem('accessToken');
 	
 	try {
-	      const userResponse = await fetch(`http://localhost:8080/api/usuarios/${sesionParam.id}`, {
+	      const userResponse = await fetch(`/api/usuarios/${sesionParam.id}`, {
 	          method: 'PUT',
 	          headers: {
 				  'Content-Type': 'application/json',
@@ -84,7 +84,7 @@ async function changePassword(sesionParam, actual, nueva) {
 	const tokenPutPwd = localStorage.getItem('accessToken');
 	
 	try {
-	      const userResponse = await fetch(`http://localhost:8080/api/usuarios/changePwd/${sesionParam.id}`, {
+	      const userResponse = await fetch(`/api/usuarios/changePwd/${sesionParam.id}`, {
 	          method: 'PUT',
 	          headers: {
 				  'Content-Type': 'application/json',
@@ -123,7 +123,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   
   // Obtener información completa del usuario
   try {
-      const userResponse = await fetch(`http://localhost:8080/api/usuarios/${email}`, {
+      const userResponse = await fetch(`/api/usuarios/${email}`, {
           method: 'GET',
           headers: {
               'Authorization': `Bearer: ${token}`

@@ -20,7 +20,7 @@ public class AprendeShopApplication {
 		registrationBean.addUrlPatterns("/api/cursos/*");
 		registrationBean.addUrlPatterns("/api/usuarios/*");
 		return registrationBean;
-		
+		 
 	}
 
 }
